@@ -118,9 +118,13 @@ Parser.prototype.parseUrls = function(urls,callback) {
 		*/
 		request(url,
         	function(error, response, body){
+        		console.log("INSTAGRAM");
         		if (!error && response.statusCode == 200) {
-        			imageurls.push(body.match(regex)[0].match(httpregex)[0]);
-        			callback(imageurls);
+        			
+        			if ( regex.test(body) ) {        		
+        				imageurls.push(body.match(regex)[0].match(httpregex)[0]);
+        				callback(imageurls);
+        			}
         		} else {
         			callback(imageurls);
         		}
