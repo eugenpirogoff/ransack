@@ -29,33 +29,34 @@ function postSearch(req,res) {
     var coord2 = req.body.formcoord2.slice(0,10);
     var radius = req.body.formradius;
 
-    var searchstring = twitterURL+coord1+","+coord2+","+radius+"km";
-    console.log("Request to the following coordinates");
+	var searchstring = twitterURL+coord1+","+coord2+","+radius+"km";
+	console.log("Request to the following coordinates");
     console.log("Lat : "+coord1);
     console.log("Long : "+coord2);
-    console.log("Radius : "+radius);
  
-    var data;
-    /* Requesting JSON data from twitter
-    * if succeeded, callback is defining the twitter parser and defining a callback
-    * method
-    */
-    request.post({ url: searchstring,
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ a: 1, b: 2,c: 3})},
-      // CALLBACK FUNCTION
+  	var data;
+  	/* Requesting JSON data from twitter
+  	* if succeeded, callback is defining the twitter parser and defining a callback
+  	* method
+  	*/
+  	request.post({ url: searchstring,
+    	headers: {'Content-Type': 'application/json'},
+    	body: JSON.stringify({ a: 1, b: 2,c: 3})},
+    	// CALLBACK FUNCTION
         function(error, response, body){
-          if (!error && response.statusCode == 200) {
-            // Getting parser
-            var parserObj = new twitterutils.Parser(body);
+        	if (!error && response.statusCode == 200) {
+        		// Getting parser
+        		var parserObj = new twitterutils.Parser(body);
 
-            // Defining callback for parserObj
-            parserObj.onLoaded = function(tweets) {
-              res.render('tweets',{tweets : tweets});
-            }
-            parserObj.parseTweets();
-          }
-        }
+        		// Defining callback for parserObj
+        		parserObj.onLoaded = function(tweets) {
+        			res.render('tweets',{tweets : tweets});
+        		}
+        		parserObj.parseTweets();
+        	} else {
+        		res.render('error');
+        	}
+      	}
     );
 }
 
