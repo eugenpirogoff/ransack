@@ -1,0 +1,27 @@
+{
+  "name": "ransack",
+  "version": "0.0.1",
+  "description": "Image Search with Twitter API and Geolocation",
+  "main": "server.js",
+  "scripts": {
+    "start": "server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eugenpirogoff/ransack.git"
+  },
+  "dependencies": {
+    "express": "3.0.x",
+    "path":"latest", 
+    "mongoose":"latest",
+    "formidable":"latest",
+    "request":"latest",
+    "jade":"latest"
+  },
+  "author": "Jan Christian Nikles & Eugen Pirogoff",
+  "license": "MIT",
+  "subdomain": "ransack",
+  "engines": {
+    "node": "0.8.x"
+  }
+}

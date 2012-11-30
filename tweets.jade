@@ -1,0 +1,28 @@
+style
+  body {
+    padding: 50px;
+    font: 16px "Helvetica Neue", Helvetica;
+  }
+h1 Tweet List !
+table(border=1)
+  thead
+    tr
+      th Icon
+      th User
+      th Tweet
+      th Media
+      th Instagram
+  for tweet in tweets
+    tr
+      td
+        if tweet.profile_image != undefined
+          img(src=tweet.profile_image)
+      td #{tweet.from_user}
+      td #{tweet.text}
+      td
+        for photo in tweet.media
+          img(src=photo)
+      td
+        for link in tweet.urls
+          a(href=link) Click meeee
+      
