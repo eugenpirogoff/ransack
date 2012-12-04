@@ -13,12 +13,12 @@
   "dependencies": {
     "express": "latest",
     "path":"latest", 
-    "mongoose":"latest",
+    "mongodb":"latest",
     "formidable":"latest",
     "request":"latest",
     "jade":"latest"
   },
-  "author": "Jan Christian Nikles & Eugen Pirogoff",
+  "author": "Eugen Pirogoff",
   "license": "MIT",
   "subdomain": "ransack",
   "engines": {

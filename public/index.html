@@ -94,14 +94,27 @@
  
         <!-- The drop down menu -->
         <ul class="nav pull-right">
-          <li><a href="/users/sign_up">Sign Up</a></li>
+          <li class="dropdown">
+          	<a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign Up</a>
+          	<div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
+          	<form action="/signup" method="post" accept-charset="UTF-8">
+              <input id="user_username" style="margin-bottom: 15px;" type="text" name="username" placeholder="username" size="30" />
+              <input id="user_email" style="margin-bottom: 15px;" type="email" name="email" placeholder="email" size="30" />
+              <input id="user_password" style="margin-bottom: 15px;" type="password" name="password" placeholder="password" size="30" />
+              <input id="user_password_confirm" style="margin-bottom: 15px;" type="password" name="password_confirm" placeholder="password(repeat)" size="30" />
+              
+             
+              <button class="btn">Sign Up </button>
+            </form>
+          	</div>
+          </li>
           <li class="divider-vertical"></li>
           <li class="dropdown">
             <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">
               </i>Sign In <strong class="caret"></strong></a>
             <div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
               
-            <form action="/users/sign_in" method="post" accept-charset="UTF-8">
+            <form action="/sign_in" method="post" accept-charset="UTF-8">
               <input id="user_username" style="margin-bottom: 15px;" type="text" name="formusername" placeholder="username"size="30" />
               <input id="user_password" style="margin-bottom: 15px;" type="password" name="formpassword" placeholder="password" size="30" />
              

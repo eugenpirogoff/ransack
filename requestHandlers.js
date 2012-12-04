@@ -1,9 +1,7 @@
 var application_root = __dirname,
-    express = require("express"),
     path = require("path"),
-    mongoose = require("mongoose"),
+    mongo = require("mongodb").MongoClient,
     request = require("request"),
-    routes = require("./routes");
     twitterutils = require("./twitterutils");
 
 /**
@@ -60,6 +58,33 @@ function postSearch(req,res) {
     );
 }
 
+function postSignUp(req,res) {
+	var email_pattern = /\w+\@\w+\.\w{2,3}$/;
+	var username = req.body.username;
+	var pwd = req.body.password;
+	var pwd_confirm = req.body.password_confirm;
+	var email = req.body.email;
+	var user = {
+		username:username,
+		password:pwd,
+		email:email
+		};
+	console.log(username,pwd,email,email_pattern.test(email));
+	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+  		if(err) { return console.dir(err);}
+		var collection = db.collection("users");
+		collection.insert(user,function(err,result) {
+			if(!err) {
+				console.log(result);
+			} else {
+				console.log("FEHLER");
+			}
+		});
+		//console.log(collection.find({username:"Jan"}));
+	});
+	res.render('error',{message: "SIGNUP"});
+}
+
 function postSearchByUser(req,res) {
   res.send('POST event to /search/user and creates a Search Event of the given Data for a special User');
 }
@@ -69,3 +94,4 @@ exports.getSearchById = getSearchById;
 exports.getSearchByUser = getSearchByUser;
 exports.postSearch = postSearch;
 exports.postSearchByUser = postSearchByUser;
+exports.postSignUp = postSignUp;
