@@ -6,6 +6,7 @@
 /* Add top padding for navbar-top-fixed */
 body {
   padding-top: 40px;
+  padding-left: 200px;
  /* padding-bottom: 40px; */
   }
 /* Remove top padding when top navbar goes static in narrow viewports */
@@ -15,18 +16,19 @@ body {
   }
 }
 
+.span2 {
+  padding: 10px;
+}
 
-.map  {
+/* mymap class */
+.mymap  {
   width: 100%;
   min-width: 600px;
   height: 100%;
   min-height: 800px;
 }
 
-.span2 {
-  padding: 10px;
-}
-
+/* my map id*/
 #map img {
   max-width: none;
 }

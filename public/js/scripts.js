@@ -8,3 +8,10 @@ $(function() {
     e.stopPropagation();
   });
 });
+
+
+$(document).ready(function(){
+	$('.mymap').css("min-height",$(window).innerHeight()-40);
+	$('.mymap').css("height",$(window).innerHeight()-40);
+	console.log($(window).innerHeight());
+})

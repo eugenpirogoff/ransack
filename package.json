@@ -18,7 +18,7 @@
     "request":"latest",
     "jade":"latest"
   },
-  "author": "Eugen Pirogoff",
+  "author": "Jan Christian Nikles & Eugen Pirogoff",
   "license": "MIT",
   "subdomain": "ransack",
   "engines": {
