@@ -20,6 +20,22 @@ function getSearchById(req,res) {
 function getSearchByUser(req,res) {
   res.send('GET event to /search/user returns a list of Searches for a special User');
 }
+function getRoot(req,res) {
+	res.render('index');
+}
+function getUserList(req,res) {
+	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+		if (!err) {
+			var collection = db.collection('users');
+			collection.find().toArray(function(err,items) {
+				for(item in items) {
+					console.log(items[item]);
+				}
+			});
+		}
+	});
+	res.render('index');
+}
 
 // POST handlers
 function postSearch(req,res) {
@@ -59,36 +75,56 @@ function postSearch(req,res) {
 }
 
 function postSignUp(req,res) {
-	var email_pattern = /\w+\@\w+\.\w{2,3}$/;
+	var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 	var username = req.body.username;
 	var pwd = req.body.password;
 	var pwd_confirm = req.body.password_confirm;
 	var email = req.body.email;
+	/**
+	* Validating data
+	*/
+	if (!email_pattern.test(email)) {
+		res.render('error',{message:"Invalid Email Address"});
+		return;
+	}
+	if (pwd.length < 5) {
+		res.render('error',{message:"Password too short (minimum 5 characters)"});
+		return;
+	}
+	if (pwd != pwd_confirm) {
+		res.render('error',{message:"Passwords don´t match"});
+		return;
+	}
+	/* Building User JSON */
 	var user = {
 		username:username,
 		password:pwd,
 		email:email
-		};
-	console.log(username,pwd,email,email_pattern.test(email));
+	};
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
-  		if(err) { return console.dir(err);}
-		var collection = db.collection("users");
-		collection.insert(user,function(err,result) {
-			if(!err) {
-				console.log(result);
+		var collection = db.collection('users');
+		collection.find({ '$or': [ { username:username }, { email:email } ]}).toArray(function(err,items) {
+			// Checking if user doesn´t exist already
+			if (!err && items.length == 0) {
+				collection.insert(user,function(err,result) {
+					if (!err)
+						res.render('error',{message:"Registration successful!"});
+					else
+						res.render('error',{message:"Registration failed (Database error " + err+ "."});
+				});
 			} else {
-				console.log("FEHLER");
+				res.render('error',{message:"Username or Email already registred!"});
 			}
 		});
-		//console.log(collection.find({username:"Jan"}));
 	});
-	res.render('error',{message: "SIGNUP"});
 }
 
 function postSearchByUser(req,res) {
   res.send('POST event to /search/user and creates a Search Event of the given Data for a special User');
 }
 
+exports.getRoot = getRoot;
+exports.getUserList = getUserList;
 exports.getSearch = getSearch;
 exports.getSearchById = getSearchById;
 exports.getSearchByUser = getSearchByUser;

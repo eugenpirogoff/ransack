@@ -41,6 +41,8 @@ app.set('view engine', 'jade');
 
 // Assembling Routing dictionary
 var getRoutes = {};
+getRoutes['/'] = handlers.getRoot;
+getRoutes['/users'] = handlers.getUserList;
 getRoutes['/search'] = handlers.getSearch;
 getRoutes['/search/:id'] = handlers.getSearchById;
 getRoutes['/search/user'] = handlers.getSearchByUser;
