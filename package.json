@@ -11,7 +11,7 @@
     "url": "https://github.com/eugenpirogoff/ransack.git"
   },
   "dependencies": {
-    "express": "3.0.x",
+    "express": "latest",
     "path":"latest", 
     "mongoose":"latest",
     "formidable":"latest",
@@ -22,6 +22,6 @@
   "license": "MIT",
   "subdomain": "ransack",
   "engines": {
-    "node": "0.8.x"
+    "node": "0.6.x"
   }
 }
