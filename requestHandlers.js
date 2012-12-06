@@ -11,19 +11,19 @@ var application_root = __dirname,
 var twitterURL = "http://search.twitter.com/search.json?q=*&rpp=600&include_entities=true&result_type=mixed&geocode=";
 
 // GET HANDLERS
-function getSearch(req,res) {
-  res.send('GET event to /search returns a list of Searches');
+function getSearch(req, res) {
+    res.send('GET event to /search returns a list of Searches');
 }
-function getSearchById(req,res) {
-  res.send('GET event to /search/:id returns a speacial Search by its ID');
+function getSearchById(req, res) {
+    res.send('GET event to /search/:id returns a speacial Search by its ID');
 }
-function getSearchByUser(req,res) {
-  res.send('GET event to /search/user returns a list of Searches for a special User');
+function getSearchByUser(req, res) {
+    res.send('GET event to /search/user returns a list of Searches for a special User');
 }
-function getRoot(req,res) {
+function getRoot(req, res) {
 	res.render('index');
 }
-function getUserList(req,res) {
+function getUserList(req, res) {
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
 		if (!err) {
 			var collection = db.collection('users');
@@ -54,11 +54,11 @@ function postSearch(req,res) {
   	* method
   	*/
   	request.post({ url: searchstring,
-    	headers: {'Content-Type': 'application/json'},
-    	body: JSON.stringify({ a: 1, b: 2,c: 3})},
-    	// CALLBACK FUNCTION
-        function(error, response, body){
-        	if (!error && response.statusCode == 200) {
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({ a: 1, b: 2,c: 3})},
+                 // CALLBACK FUNCTION
+                 function(error, response, body){
+        	       if (!error && response.statusCode == 200) {
         		// Getting parser
         		var parserObj = new twitterutils.Parser(body);
 
