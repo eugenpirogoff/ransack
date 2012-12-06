@@ -111,13 +111,10 @@
             <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">
               </i>Sign In <strong class="caret"></strong></a>
             <div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
-              
-            <form action="/sign_in" method="post" accept-charset="UTF-8">
-              <input id="user_username" style="margin-bottom: 15px;" type="text" name="formusername" placeholder="username"size="30" />
-              <input id="user_password" style="margin-bottom: 15px;" type="password" name="formpassword" placeholder="password" size="30" />
+              <input id="username" style="margin-bottom: 15px;" type="text" name="formusername" placeholder="username"size="30" />
+              <input id="password" style="margin-bottom: 15px;" type="password" name="formpassword" placeholder="password" size="30" />
              
-              <input class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" type="submit" name="commit" value="Sign In" />
-            </form>
+              <button id="loginbutton" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" name="commit" value="Sign In">Sign In</button>
             </div>
           </li>
         </ul>
@@ -135,8 +132,28 @@
 
 
 <script>
-    
 
+	$("#loginbutton").click(function() {
+		var username = $("#username").val();
+		var password = $("#password").val();
+
+		$.ajax({
+			type: "POST",
+			url: "sign_in",
+			data: {	username: username,
+					password: password
+					},
+			success: function(response) {
+				for (index in response) {
+					console.log(index + response[index]);
+				}
+				if (response['success'])
+					alert("Login request successful");
+				else
+					alert("Login failed ( "+response.message+" ).");
+			}
+		});
+	});
     $("#gettosearch").click(function () {
       $.ajax({ 
       	type: "GET",

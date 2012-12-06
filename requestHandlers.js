@@ -126,25 +126,34 @@ function postSignUp(req,res) {
 }
 
 function postSignIn(req,res) {
-	var username = req.body.formusername;
-	var password = req.body.formpassword;
+	var username = req.body.username;
+	var password = req.body.password;
+	console.log("Daten:" + username + password);
+	res.setHeader('Content-Type','application/json');
+		
+	var result = {};
+	result.success = false;
 	
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
-		if(err)
-			res.render('error',{message:"Error connecting to database"});
+		if(err) {
+			result.message = "Error connecting to database";
+			res.send(result);
+			return;
+		}
 		var collection = db.collection('users');
 		collection.find({username : username}).toArray(function(err,items) {
 			if (items.length == 0) {
-				res.render('error',{message:"User not found."});
-				return;
+				result.message = "User doesn´t exist.";
 			}
-			if (!hashcode.verify(password,items[0].password)) {
-				res.render('error',{message:"Invalid password."});
-				return;
+			else if (!hashcode.verify(password,items[0].password)) {
+				result.message = "Password not correct.";
+			} else {
+				// Setting up user Session (=email)
+				req.session.user = items[0].email;
+				result.success = true;
+				result.message = "Logged In";
 			}
-			// Setting up user Session (=email)
-			req.session.user = items[0].email;
-			res.render('error',{message:"Logged in"});
+			res.send(result);
 		});
 	});
 }
