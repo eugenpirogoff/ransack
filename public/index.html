@@ -3,28 +3,67 @@
   <head>
     <meta charset="utf-8">
     <title>Ransack</title>
-<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
+
 <link href="css/style.css" rel="stylesheet">
 <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
-
+<script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=true"></script>
 <script type="text/javascript" src="js/jquery-1.8.2.js"></script>
 <script type="text/javascript" src="js/scripts.js"></script>
 <script type="text/javascript" src="js/gmaps.js"></script>
 <script type="text/javascript" src="js/bootstrap-dropdown.js"></script>
   <script type="text/javascript">
+$(document).ready(function(){
     var map;
-    $(document).ready(function(){
-      map = new GMaps({
-        div: '#map',
+    
+    map = new GMaps({
+    	div: '#map',
         lat: -12.043333,
-        lng: -77.028333
-      }); 
-
-  GMaps.geolocate({
+        lng: -77.028333,
+        click: function(e) {
+        	var lat = e.latLng.$a;
+        	var lng = e.latLng.ab;
+        	map.removeOverlays();
+        	map.drawOverlay({
+        		lat: lat,
+        		lng: lng,
+        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+        		verticalAlign: 'top',
+        		horizontalAlign: 'center'
+        	});
+        	$('#formcoord1').val(lat);
+        	$('#formcoord2').val(lng);
+        },
+        dragend: function(e) {
+        	var lat = map.getCenter().$a;
+        	var lng = map.getCenter().ab;
+        	
+        	map.removeOverlays();
+        	map.drawOverlay({
+        		lat: lat,
+        		lng: lng,
+        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+        		verticalAlign: 'top',
+        		horizontalAlign: 'center'
+        	});
+        	$('#formcoord1').val(lat);
+        	$('#formcoord2').val(lng);
+        }
+    });
+    
+	GMaps.geolocate({
         success: function(position){
-          map.setCenter(position.coords.latitude, position.coords.longitude);
-		      $('input[name="formcoord1"]').val(position.coords.latitude);
-          $('input[name="formcoord2"]').val(position.coords.longitude);
+        	var lat = position.coords.latitude;
+        	var lng = position.coords.longitude;
+          	map.setCenter(lat, lng);
+			$('input[name="formcoord1"]').val(lat);
+          	$('input[name="formcoord2"]').val(lng);
+          	map.drawOverlay({
+    			lat: lat,
+		        lng: lng,
+        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+		        verticalAlign: 'top',
+        		horizontalAlign: 'center'
+    		});
         },
         error: function(error){
           alert('Geolocation failed: '+error.message);
@@ -36,8 +75,9 @@
         },
         always: function(){
         }
-      });
     });
+});
+
   </script>
 
   </head>
