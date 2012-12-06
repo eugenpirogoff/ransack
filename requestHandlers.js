@@ -21,26 +21,37 @@ function getSearchById(req, res) {
 function getSearchByUser(req, res) {
     res.send('GET event to /search/user returns a list of Searches for a special User');
 }
+/*
+* Method for the / request
+* Checking if a session cookie exists
+*/
 function getRoot(req,res) {
 	if (req.session.user) {
 		res.render('index',{session:req.session.user});
 		console.log(req.session.user);
 	}
 	else
+		console.log("No session");
 		res.render('index',{session:""});
 }
-function getUserList(req, res) {
-	mongo.connect("mongodb://localhost:27017/", function(err, db) {
-		if (!err) {
-			var collection = db.collection('users');
-			collection.find().toArray(function(err,items) {
-				for(item in items) {
-					console.log(items[item]);
-				}
-			});
-		}
-	});
-	res.render('index');
+/**
+* Returning if user is already logged in
+*/
+function getLoginStatus(req,res) {
+	res.setHeader('Content-Type','application/json');
+	if (req.session.user) {
+		res.send({login:true,username:req.session.user});
+	} else {
+		res.send({login:false});
+	}
+}	
+function getLogout(req, res) {
+	if (req.session.user) {
+		req.session.destroy();
+		res.redirect('/');
+	} else {
+		res.render('error',{message:"Not logged in actually.."});
+	}
 }
 
 // POST handlers
@@ -128,7 +139,7 @@ function postSignUp(req,res) {
 function postSignIn(req,res) {
 	var username = req.body.username;
 	var password = req.body.password;
-	console.log("Daten:" + username + password);
+	// Setting header for JSON response
 	res.setHeader('Content-Type','application/json');
 		
 	var result = {};
@@ -149,8 +160,9 @@ function postSignIn(req,res) {
 				result.message = "Password not correct.";
 			} else {
 				// Setting up user Session (=email)
-				req.session.user = items[0].email;
+				req.session.user = items[0].username;
 				result.success = true;
+				result.username = items[0].username;
 				result.message = "Logged In";
 			}
 			res.send(result);
@@ -165,10 +177,11 @@ function postSearchByUser(req,res) {
 /* EXPORTS */
 // GET
 exports.getRoot = getRoot;
-exports.getUserList = getUserList;
+exports.getLogout = getLogout;
 exports.getSearch = getSearch;
 exports.getSearchById = getSearchById;
 exports.getSearchByUser = getSearchByUser;
+exports.getLoginStatus = getLoginStatus;
 // POST
 exports.postSearch = postSearch;
 exports.postSearchByUser = postSearchByUser;

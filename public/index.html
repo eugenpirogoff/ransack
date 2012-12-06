@@ -94,7 +94,7 @@
  
         <!-- The drop down menu -->
         <ul class="nav pull-right">
-          <li class="dropdown">
+          <li id="signup_dropdown" class="dropdown">
           	<a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign Up</a>
           	<div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
           	<form action="/signup" method="post" accept-charset="UTF-8">
@@ -102,19 +102,19 @@
               <input id="user_email" style="margin-bottom: 15px;" type="email" name="email" placeholder="email" size="30" />
               <input id="user_password" style="margin-bottom: 15px;" type="password" name="password" placeholder="password" size="30" />
               <input id="user_password_confirm" style="margin-bottom: 15px;" type="password" name="password_confirm" placeholder="password(repeat)" size="30" />
-              <button class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;">Sign Up </button>
+              <button class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;"> Sign Up </button>
             </form>
           	</div>
           </li>
           <li class="divider-vertical"></li>
-          <li class="dropdown">
-            <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">
+          <li id="signin_dropdown" class="dropdown">
+            <a id="userDropdownLink" class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">
               </i>Sign In <strong class="caret"></strong></a>
-            <div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
+            <div id="userDropdown" class="dropdown-menu" style="padding: 15px; padding-bottom: 10px;">
               <input id="username" style="margin-bottom: 15px;" type="text" name="formusername" placeholder="username"size="30" />
               <input id="password" style="margin-bottom: 15px;" type="password" name="formpassword" placeholder="password" size="30" />
              
-              <button id="loginbutton" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" name="commit" value="Sign In">Sign In</button>
+              <button id="loginbutton" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" name="commit" value="Sign In"> Sign In</button>
             </div>
           </li>
         </ul>
@@ -132,7 +132,22 @@
 
 
 <script>
+$(document).ready(function() {
+	// Checking if user Logged in
+	function isLoggedIn() {
+		$.ajax({
+			type: "GET",
+			url: "status",
+			success: function(response) {
+				if (response.login) {
+					setupLogin(response.username);
+				}
+			}
+		});
+	}
+	isLoggedIn();
 
+	// LOGIN PROCESS
 	$("#loginbutton").click(function() {
 		var username = $("#username").val();
 		var password = $("#password").val();
@@ -144,16 +159,26 @@
 					password: password
 					},
 			success: function(response) {
-				for (index in response) {
-					console.log(index + response[index]);
+				if (response.success) {
+					setupLogin(response.username);
 				}
-				if (response['success'])
-					alert("Login request successful");
 				else
 					alert("Login failed ( "+response.message+" ).");
 			}
 		});
 	});
+	
+	function setupLogin(username) {
+		$('#signup_dropdown').empty();
+		$('#userDropdownLink').replaceWith(
+		'<a id="userDropdownLink" class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">'+
+              '</i>'+username+'<strong class="caret"></strong></a>');
+        $('#userDropdown').replaceWith(
+        	'<div id="userDropdown" class="dropdown-menu" style="padding: 5px; padding-bottom: 0px;">'+
+              '<li><a href="settings"><i class="icon-wrench"></i> Settings</a></li>'+
+              '<li><a href="logout"><i class="icon-remove-sign"></i> Logout</a></li></div>');
+	}
+	
     $("#gettosearch").click(function () {
       $.ajax({ 
       	type: "GET",
@@ -208,6 +233,7 @@
 			}
 		});
     });
+});
 </script>
 </body>
 </html>
