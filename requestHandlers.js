@@ -3,6 +3,7 @@ var application_root = __dirname,
     mongo = require("mongodb").MongoClient,
     request = require("request"),
     twitterutils = require("./twitterutils");
+    hashcode = require("password-hash");
 
 /**
 * REQUEST HANDLERS
@@ -20,8 +21,13 @@ function getSearchById(req, res) {
 function getSearchByUser(req, res) {
     res.send('GET event to /search/user returns a list of Searches for a special User');
 }
-function getRoot(req, res) {
-	res.render('index');
+function getRoot(req,res) {
+	if (req.session.user) {
+		res.render('index',{session:req.session.user});
+		console.log(req.session.user);
+	}
+	else
+		res.render('index',{session:""});
 }
 function getUserList(req, res) {
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
@@ -98,7 +104,7 @@ function postSignUp(req,res) {
 	/* Building User JSON */
 	var user = {
 		username:username,
-		password:pwd,
+		password:hashcode.generate(pwd),
 		email:email
 	};
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
@@ -119,15 +125,43 @@ function postSignUp(req,res) {
 	});
 }
 
+function postSignIn(req,res) {
+	var username = req.body.formusername;
+	var password = req.body.formpassword;
+	
+	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+		if(err)
+			res.render('error',{message:"Error connecting to database"});
+		var collection = db.collection('users');
+		collection.find({username : username}).toArray(function(err,items) {
+			if (items.length == 0) {
+				res.render('error',{message:"User not found."});
+				return;
+			}
+			if (!hashcode.verify(password,items[0].password)) {
+				res.render('error',{message:"Invalid password."});
+				return;
+			}
+			// Setting up user Session (=email)
+			req.session.user = items[0].email;
+			res.render('error',{message:"Logged in"});
+		});
+	});
+}
+
 function postSearchByUser(req,res) {
   res.send('POST event to /search/user and creates a Search Event of the given Data for a special User');
 }
 
+/* EXPORTS */
+// GET
 exports.getRoot = getRoot;
 exports.getUserList = getUserList;
 exports.getSearch = getSearch;
 exports.getSearchById = getSearchById;
 exports.getSearchByUser = getSearchByUser;
+// POST
 exports.postSearch = postSearch;
 exports.postSearchByUser = postSearchByUser;
+exports.postSignIn = postSignIn;
 exports.postSignUp = postSignUp;

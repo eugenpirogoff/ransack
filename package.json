@@ -16,7 +16,8 @@
     "mongodb":"latest",
     "formidable":"latest",
     "request":"latest",
-    "jade":"latest"
+    "jade":"latest",
+	"password-hash":"latest"
   },
   "author": "Jan Christian Nikles & Eugen Pirogoff",
   "license": "MIT",
