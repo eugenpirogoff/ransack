@@ -21,7 +21,7 @@ body {
 /* mymap class */
 .mymap  {
   margin-top: 40px;
-  margin-left: 200px;
+  margin-left: 0px;
   min-width: 200px;
   min-height: 200px;
 }
