@@ -11,71 +11,9 @@
 <script type="text/javascript" src="js/scripts.js"></script>
 <script type="text/javascript" src="js/gmaps.js"></script>
 <script type="text/javascript" src="js/bootstrap-dropdown.js"></script>
-  <script type="text/javascript">
+<script type="text/javascript">
 $(document).ready(function(){
-    var map;
     
-    map = new GMaps({
-    	div: '#map',
-        lat: -12.043333,
-        lng: -77.028333,
-        click: function(e) {
-        	var lat = e.latLng.$a;
-        	var lng = e.latLng.ab;
-        	map.removeOverlays();
-        	map.drawOverlay({
-        		lat: lat,
-        		lng: lng,
-        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
-        		verticalAlign: 'top',
-        		horizontalAlign: 'center'
-        	});
-        	$('#formcoord1').val(lat);
-        	$('#formcoord2').val(lng);
-        },
-        dragend: function(e) {
-        	var lat = map.getCenter().$a;
-        	var lng = map.getCenter().ab;
-        	
-        	map.removeOverlays();
-        	map.drawOverlay({
-        		lat: lat,
-        		lng: lng,
-        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
-        		verticalAlign: 'top',
-        		horizontalAlign: 'center'
-        	});
-        	$('#formcoord1').val(lat);
-        	$('#formcoord2').val(lng);
-        }
-    });
-    
-	GMaps.geolocate({
-        success: function(position){
-        	var lat = position.coords.latitude;
-        	var lng = position.coords.longitude;
-          	map.setCenter(lat, lng);
-			$('input[name="formcoord1"]').val(lat);
-          	$('input[name="formcoord2"]').val(lng);
-          	map.drawOverlay({
-    			lat: lat,
-		        lng: lng,
-        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
-		        verticalAlign: 'top',
-        		horizontalAlign: 'center'
-    		});
-        },
-        error: function(error){
-          alert('Geolocation failed: '+error.message);
-        },
-        not_supported: function(){
-          $('input[name="formcoord1"]').val("error");
-          $('input[name="formcoord2"]').val("error");
-          alert("Your browser does not support geolocation");
-        },
-        always: function(){
-        }
-    });
 });
 
   </script>
@@ -113,8 +51,10 @@ $(document).ready(function(){
 
         <!-- Searchcomponents -->
         <ul class="nav">
-        <form class="navbar-form pull-center" action="/search" method="post">
+        <div class="navbar-form pull-center">
           <select class="input-small" id="formradius" name="formradius">
+          	<option>1</option>
+          	<option>5</option>
             <option>10</option>
             <option>20</option>
             <option>30</option>
@@ -123,9 +63,9 @@ $(document).ready(function(){
           </select>
           <input class="span2" id="formcoord1" name="formcoord1" type="text" placeholder="Latitude"> 
           <input class="span2" id="formcoord2" name="formcoord2" type="text" placeholder="Longtitude"> 
-          <button type="submit" class="btn"><i class="icon-search">
+          <button id="searchbutton" class="btn"><i class="icon-search">
               </i>Search</button>
-        </form>
+        </div>
         </ul>
 
 
@@ -172,7 +112,71 @@ $(document).ready(function(){
 
 
 <script>
+
 $(document).ready(function() {
+	var map;
+    
+    map = new GMaps({
+    	div: '#map',
+        lat: -12.043333,
+        lng: -77.028333,
+        click: function(e) {
+        	var lat = e.latLng.$a;
+        	var lng = e.latLng.ab;
+        	/*map.removeOverlays();
+        	map.drawOverlay({
+        		lat: lat,
+        		lng: lng,
+        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+        		verticalAlign: 'top',
+        		horizontalAlign: 'center'
+        	});*/
+        	$('#formcoord1').val(lat);
+        	$('#formcoord2').val(lng);
+        },
+        dragend: function(e) {
+        	var lat = map.getCenter().$a;
+        	var lng = map.getCenter().ab;
+        	
+        	/*map.removeOverlays();
+        	map.drawOverlay({
+        		lat: lat,
+        		lng: lng,
+        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+        		verticalAlign: 'top',
+        		horizontalAlign: 'center'
+        	});*/
+        	$('#formcoord1').val(lat);
+        	$('#formcoord2').val(lng);
+        }
+    });
+    
+	GMaps.geolocate({
+        success: function(position){
+        	var lat = position.coords.latitude;
+        	var lng = position.coords.longitude;
+          	map.setCenter(lat, lng);
+			$('input[name="formcoord1"]').val(lat);
+          	$('input[name="formcoord2"]').val(lng);
+          	map.drawOverlay({
+    			lat: lat,
+		        lng: lng,
+        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+		        verticalAlign: 'top',
+        		horizontalAlign: 'center'
+    		});
+        },
+        error: function(error){
+          alert('Geolocation failed: '+error.message);
+        },
+        not_supported: function(){
+          $('input[name="formcoord1"]').val("error");
+          $('input[name="formcoord2"]').val("error");
+          alert("Your browser does not support geolocation");
+        },
+        always: function(){
+        }
+    });
 	// Checking if user Logged in
 	function isLoggedIn() {
 		$.ajax({
@@ -219,60 +223,41 @@ $(document).ready(function() {
             '<li><a href="logout"><i class="icon-remove-sign"></i> Logout</a></li></div>');
 	}
 	
-    $("#gettosearch").click(function () {
-      $.ajax({ 
-      	type: "GET",
-		url: "search",
-		data: "GETDATA",
-		success: function(antwort){
-			alert( "GET to /search erfolgreich : " + antwort );
+	/**
+	* SEARCH FUNCTION - ajax get request
+	*/
+	$("#searchbutton").click(function() {
+		// Assembling search data
+		var searchdata = {
+			formcoord1:$("#formcoord1").val(),
+			formcoord2:$("#formcoord2").val(),
+			formradius:$("#formradius").val()
+		};
+		$.ajax({
+			type: "POST",
+			url: "search",
+			data: {
+				lat: $("#formcoord1").val(),
+				lng: $("#formcoord2").val(),
+				radius: $("#formradius").val()
+			},
+			// This function will set the actual elements on the MAP
+			success: function(data) {
+				map.removeOverlays();
+				for(index in data) {
+					var tweet = data[index];
+					map.drawOverlay({
+    					lat: tweet.geo.coordinates[0],
+		        		lng: tweet.geo.coordinates[1],
+        				content: '<div class="overlay"><img src="'+tweet.profile_image+'"><div class="overlay_arrow above"></div></div>',
+		        		verticalAlign: 'top',
+        				horizontalAlign: 'center'
+    				});
+    			}
 			}
 		});
-    });
-
-    $("#gettosearchbyid").click(function () {
-      $.ajax({ 
-      	type: "GET",
-		url: "search/:id",
-		data: "GETDATA",
-		success: function(antwort){
-			alert( "GET to /search/:id erfolgreich : " + antwort );
-			}
-		});
-    });
-
-    $("#posttosearch").click(function () {
-      $.ajax({ 
-      	type: "POST",
-		url: "search",
-		data: "",
-		success: function(antwort){
-			alert( "POST to /search erfolgreich : " + antwort );
-			}
-		});
-    });
-
-     $("#gettosearchuser").click(function () {
-      $.ajax({ 
-      	type: "GET",
-		url: "search/user",
-		data: "GETDATA",
-		success: function(antwort){
-			alert( "GET to /search/user erfolgreich : " + antwort );
-			}
-		});
-    });
-
-     $("#posttosearchuser").click(function () {
-      $.ajax({ 
-      	type: "POST",
-		url: "search/user",
-		data: "POSTDATA",
-		success: function(antwort){
-			alert( "POST to /search/user erfolgreich : " + antwort );
-			}
-		});
-    });
+	});
+    
 });
 </script>
 </body>

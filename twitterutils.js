@@ -11,14 +11,13 @@ var request = require("request");
 /**
 * Constructor for the Parser
 */
-var Parser = function(tweeties) {
+var Parser = function(tweets) {
 	// Counting the website calls for synchronising issues
 	this.counter = 0;
-	this.tweets = JSON.parse(tweeties).results;
+	this.tweets = JSON.parse(tweets).results;
 	this.formattedTweets = [];
 	// Goal, which the counter is supposed to reach
 	this.goal = this.tweets.length;
-	console.log("Counter:" + this.counter +", Goal:"+ this.goal);
 }
 
 /* Getting the media url out of twitter JSON */
@@ -50,19 +49,30 @@ Parser.prototype.parseTweets = function() {
     }
     console.log("Request ready!");
 }
+/*
+* Parsing a single tweet
+*/
 Parser.prototype.parseTweet = function(result,countercallback) {
 	var self = this;
-    this.parseUrls(result.entities.urls,function(urls) {
-    	self.formattedTweets.push( {
-       		from_user:result.from_user,
-       		text:result.text,
-       		profile_image:result.profile_image_url,
-       		media: parseMedia(result),
-       		urls: urls
+	// Calling parse URL´s from here. Once finished, callback will
+	// assemble the final JSON
+	if (result.geo != null) {
+    	this.parseUrls(result.entities.urls,function(urls) {
+    		self.formattedTweets.push( {
+	       		from_user:result.from_user,
+    	   		text:result.text,
+       			profile_image:result.profile_image_url,
+       			media: parseMedia(result),
+       			urls: urls,
+       			geo: result.geo
+       		});
+       		console.log(result.geo);
+       		// Calling the Countercallback
+       		countercallback();
        	});
-       	
-       	countercallback();
-    });
+	}
+	else
+		countercallback();
 }
     
 /**
@@ -81,13 +91,18 @@ Parser.prototype.parseUrls = function(urls,callback) {
 	var resolved = [];
 	// Return array
 	var imageurls = [];
+	// Counters
+	var counter = 0;
+	var goal = 0;
 	
 	// Filling up the resolved array with the URLs
 	for (var i in urls) {
 		resolved.push(urls[i].expanded_url);
 		console.log(urls[i].expanded_url);
 	}
-	
+	// Setting the goal
+	goal = resolved.length;
+		
 	/* Now applying several RegEx tests for further parsing
 	 * Each picture service parser needs an instance
 	 * instagram: parseInstagram
@@ -95,39 +110,46 @@ Parser.prototype.parseUrls = function(urls,callback) {
 	if (resolved.length > 0) {
 		for (var i in resolved) {
 			if (instagramPattern.test(resolved[i]) || instagramPattern2.test(resolved[i])) {
-				parseInstagram(resolved[i]);
+				// Testing if end of the loop reached
+				i == resolved.length?
+					parseInstagram(resolved[i],true):
+					parseInstagram(resolved[i],false);
 			} else {
-				callback(imageurls);
+				counter++;
 			}
+			if (counter == goal) {
+				callback(imageurls);
+			} 
 		}
-	} else {
+	} 
+	else {
 		callback(imageurls);
+		return;
 	}
 	/**
 	* Embedded function for parsing instagram URLs
 	* @param url: URL to the instagram page
 	* @param instance: instance of the Parser object
 	*/
-	function parseInstagram(url) {
+	function parseInstagram(url,isLast) {
 		/* Defining regexes for instagram */
 		var regex = /<img class="photo" [^>]*>/m;
 		var httpregex = /http[^"]*/;
-	
+		console.log("INSTAGRAM");
 		/*
 		* Requesting Web URL, parsing the HTML code, looking for the required image url
 		*/
 		request(url,
         	function(error, response, body){
-        		console.log("INSTAGRAM");
-        		if (!error && response.statusCode == 200) {
-        			
+        		if (!error && response.statusCode == 200) {	
+        			console.log(counter);
         			if ( regex.test(body) ) {        		
         				imageurls.push(body.match(regex)[0].match(httpregex)[0]);
-        				callback(imageurls);
         			}
-        		} else {
-        			callback(imageurls);
         		}
+        		counter++;
+        		isLast || counter==goal?callback(imageurls):counter--;
+        		
       		}
     	);
     }

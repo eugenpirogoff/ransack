@@ -13,8 +13,9 @@ var twitterURL = "http://search.twitter.com/search.json?q=*&rpp=600&include_enti
 
 // GET HANDLERS
 function getSearch(req, res) {
-    res.send('GET event to /search returns a list of Searches');
+    
 }
+
 function getSearchById(req, res) {
     res.send('GET event to /search/:id returns a speacial Search by its ID');
 }
@@ -56,38 +57,36 @@ function getLogout(req, res) {
 
 // POST handlers
 function postSearch(req,res) {
-    var coord1 = req.body.formcoord1.slice(0,10);
-    var coord2 = req.body.formcoord2.slice(0,10);
-    var radius = req.body.formradius;
+    var lat = req.body.lat;
+    var lng = req.body.lng;
+    var radius = req.body.radius;
 
-	var searchstring = twitterURL+coord1+","+coord2+","+radius+"km";
+	var searchstring = twitterURL+lat+","+lng+","+radius+"km";
 	console.log("Request to the following coordinates");
-    console.log("Lat : "+coord1);
-    console.log("Long : "+coord2);
+    console.log("Lat : "+lat);
+    console.log("Long : "+lng);
  
   	var data;
   	/* Requesting JSON data from twitter
   	* if succeeded, callback is defining the twitter parser and defining a callback
   	* method
   	*/
-  	request.post({ url: searchstring,
-                  headers: {'Content-Type': 'application/json'},
-                  body: JSON.stringify({ a: 1, b: 2,c: 3})},
-                 // CALLBACK FUNCTION
-                 function(error, response, body){
-        	       if (!error && response.statusCode == 200) {
-        		// Getting parser
-        		var parserObj = new twitterutils.Parser(body);
+  	request.get(searchstring,
+                function(error, response, body){
+        	       	if (!error && response.statusCode == 200) {
+    	    			// Getting parser
+        				var parserObj = new twitterutils.Parser(body);
 
-        		// Defining callback for parserObj
-        		parserObj.onLoaded = function(tweets) {
-        			res.render('tweets',{tweets : tweets});
-        		}
-        		parserObj.parseTweets();
-        	} else {
-        		res.render('error');
-        	}
-      	}
+        				// CALLBACK for EVERYTHING - return here !!
+        				parserObj.onLoaded = function(tweets) {
+        					res.setHeader('Content-Type','application/json');
+        					res.send(tweets);
+        				}
+        				parserObj.parseTweets();
+        			} else {
+        			res.render('error');
+        			}
+      			}
     );
 }
 
