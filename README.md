@@ -17,7 +17,6 @@ Installation
 
 
 node server.js
-// this starts the Application on localhost:80
-
+// this starts the Application on localhost:8080
 
 Eugen Pirogoff
