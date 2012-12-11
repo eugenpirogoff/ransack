@@ -29,14 +29,8 @@ $(document).ready(function(){
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
- 
-      <!-- Brandname -->
       <a class="brand">Ransack</a>
- 
-      <!-- Start of the nav bar content -->
-      <div class="nav-collapse"><!-- Other nav bar content -->
-        
-        <!-- Home Button -->
+      <div class="nav-collapse">
         <ul class="nav">
           <li class="active">
             <a href="/">
@@ -46,9 +40,7 @@ $(document).ready(function(){
             </a>
           </li>
           <li class="divider-vertical"></li>
-
         </ul>
-
         <!-- Searchcomponents -->
         <ul class="nav">
         <div class="navbar-form pull-center">
@@ -68,11 +60,6 @@ $(document).ready(function(){
         </div>
         </ul>
 
-
-
-
- 
-        <!-- The drop down menu -->
         <ul class="nav pull-right">
           <li id="signup_dropdown" class="dropdown">
           	<a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign Up</a>
@@ -102,69 +89,63 @@ $(document).ready(function(){
     </div>
   </div>
 </div>
-
-
-  <div class="mymap" id="map">
-  </div>
-
-
-
-
-
+<div class="mymap" id="map">
+</div>
 <script>
 
+
 $(document).ready(function() {
-	var map;
-    
+  var map;
+    var overlay;
     map = new GMaps({
-    	div: '#map',
+      div: '#map',
         lat: -12.043333,
         lng: -77.028333,
         click: function(e) {
-        	var lat = e.latLng.$a;
-        	var lng = e.latLng.ab;
-        	/*map.removeOverlays();
-        	map.drawOverlay({
-        		lat: lat,
-        		lng: lng,
-        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
-        		verticalAlign: 'top',
-        		horizontalAlign: 'center'
-        	});*/
-        	$('#formcoord1').val(lat);
-        	$('#formcoord2').val(lng);
+          var lat = e.latLng.$a;
+          var lng = e.latLng.ab;
+          map.removeOverlays(overlay);
+          overlay = map.drawOverlay({
+            lat: lat,
+            lng: lng,
+            content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+            verticalAlign: 'top',
+            horizontalAlign: 'center'
+          });
+          $('#formcoord1').val(lat);
+          $('#formcoord2').val(lng);
         },
         dragend: function(e) {
-        	var lat = map.getCenter().$a;
-        	var lng = map.getCenter().ab;
-        	
-        	/*map.removeOverlays();
-        	map.drawOverlay({
-        		lat: lat,
-        		lng: lng,
-        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
-        		verticalAlign: 'top',
-        		horizontalAlign: 'center'
-        	});*/
-        	$('#formcoord1').val(lat);
-        	$('#formcoord2').val(lng);
+          var lat = map.getCenter().lat();
+          var lng = map.getCenter().lng();
+          
+          map.removeOverlay(overlay);
+          overlay = map.drawOverlay({
+            lat: lat,
+            lng: lng,
+            content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+            verticalAlign: 'top',
+            horizontalAlign: 'center'
+          });
+          $('#formcoord1').val(lat);
+          $('#formcoord2').val(lng);
         }
     });
     
-	GMaps.geolocate({
+  GMaps.geolocate({
         success: function(position){
-        	var lat = position.coords.latitude;
-        	var lng = position.coords.longitude;
-          	map.setCenter(lat, lng);
-			$('input[name="formcoord1"]').val(lat);
-          	$('input[name="formcoord2"]').val(lng);
-          	map.drawOverlay({
-    			lat: lat,
-		        lng: lng,
-        		content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
-		        verticalAlign: 'top',
-        		horizontalAlign: 'center'
-    		});
+          var lat = position.coords.latitude;
+          var lng = position.coords.longitude;
+            map.setCenter(lat, lng);
+      $('input[name="formcoord1"]').val(lat);
+            $('input[name="formcoord2"]').val(lng);
+            overlay = map.drawOverlay({
+          lat: lat,
+            lng: lng,
+            content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+            verticalAlign: 'top',
+            horizontalAlign: 'center'
+        });
         },
         error: function(error){
           alert('Geolocation failed: '+error.message);
@@ -177,6 +158,7 @@ $(document).ready(function() {
         always: function(){
         }
     });
+
 	// Checking if user Logged in
 	function isLoggedIn() {
 		$.ajax({
@@ -248,10 +230,11 @@ $(document).ready(function() {
 					var tweet = data[index];
 					map.drawOverlay({
     					lat: tweet.geo.coordinates[0],
-		        		lng: tweet.geo.coordinates[1],
-        				content: '<div class="overlay"><img src="'+tweet.profile_image+'"><div class="overlay_arrow above"></div></div>',
-		        		verticalAlign: 'top',
-        				horizontalAlign: 'center'
+                lng: tweet.geo.coordinates[1],
+                content: '<div class="overlay_search"><img src="'+tweet.profile_image+'" width="60px" height="60px" style=" -webkit-border-radius:5px; -moz-border-radius:5px;"><div class="overlay_arrow_search above_search"><div ><img class="icon_left" src="/img/icon_img.png" width="16px" height="16px"><img class="icon_right" src="/img/icon_fullscreen.png" width="16px" height="16px"></div></div></div>',
+                verticalAlign: 'top',
+                horizontalAlign: 'center'
+
     				});
     			}
 			}

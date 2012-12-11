@@ -29,13 +29,13 @@ body {
 .overlay{
   display:block;
   text-align:center;
-  color:#fff;
-  font-size:25px;
-  line-height:30px;
-  opacity:0.8;
-  background:#4477aa;
-  border:solid 3px #000044;
-  border-radius:4px;
+  color:black;
+  font-size:12px;
+  line-height:20px;
+  opacity:0.9;
+  background:#f2f2f2;
+  border:solid 1px #000044;
+  border-radius:6px;
   box-shadow:2px 2px 10px #333;
   text-shadow:1px 1px 1px #666;
   padding:0 20px;
@@ -50,10 +50,11 @@ body {
   position:absolute;
 }
 .overlay_arrow.above{
-  bottom:-15px;
+  bottom:-16px;
   border-left:16px solid transparent;
   border-right:16px solid transparent;
-  border-top:16px solid #336699;
+  opacity: 0.75;
+  border-top:16px solid black;
 }
 /* my map id*/
 #map img {
@@ -64,6 +65,64 @@ body {
   margin-top: 40px;
   min-width: 200px;
   width: 200px;
-
-
 }
+
+
+/*Search CSS*/
+
+/* Overlay */
+.overlay_search{
+  display:block;
+  color:black;
+  font-size:small;
+  background:#f2f2f2;
+  border:solid 1px #000023;
+  border-radius:6px;
+  box-shadow:2px 2px 5px #333;
+  box-shadow: inner 1 1 7px black;
+  position: relative;
+  top: -15px;
+}
+
+
+.overlay_arrow_search{
+  left:50%;
+  margin-left:-16px;
+  width:0;
+  height:0;
+  position:absolute;
+}
+
+.above_search{
+  bottom:-16px;
+  border-left:16px solid transparent;
+  border-right:16px solid transparent;
+  border-top:16px solid black;
+  opacity: 1;
+}
+
+img {
+  border: 3px solid #000;
+}
+
+.icon_right{
+  position: relative;
+  opacity: 0.75;
+  top: -53px;
+  right: 30px;
+  margin: 0;
+  padding: 0;
+  cursor: default;
+}
+
+.icon_left {
+  position: relative;
+  top: -33px;
+  right:-17px;
+  opacity: 0.75;
+  margin: 0;
+  padding: 0;
+  cursor: default; 
+}
+
+
