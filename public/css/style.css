@@ -101,28 +101,31 @@ body {
   opacity: 1;
 }
 
-img {
-  border: 3px solid #000;
+.icon_pin{
+  margin-left: -10
 }
+
 
 .icon_right{
   position: relative;
-  opacity: 0.75;
+  opacity: 0.85;
   top: -53px;
   right: 30px;
   margin: 0;
   padding: 0;
   cursor: default;
+  border-radius: 3px;
 }
 
 .icon_left {
   position: relative;
   top: -33px;
-  right:-17px;
-  opacity: 0.75;
+  right:-15px;
+  opacity: 0.85;
   margin: 0;
   padding: 0;
   cursor: default; 
+  border-radius: 3px;
 }
 
 

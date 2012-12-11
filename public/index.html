@@ -102,13 +102,21 @@ $(document).ready(function() {
         lat: -12.043333,
         lng: -77.028333,
         click: function(e) {
+
+          /*
+          mir ist klar das hier die coordinaten von dem Event zum einfach Pin hinclicken hinsollten, aber das funzt noch ned.
+          Darum auch erst ein mal den mittelpunkt genommen. Sorry Bro!        
           var lat = e.latLng.$a;
           var lng = e.latLng.ab;
+          */
+          var lat = map.getCenter().lat();
+          var lng = map.getCenter().lng();
+
           map.removeOverlays(overlay);
           overlay = map.drawOverlay({
             lat: lat,
             lng: lng,
-            content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+            content: '<img src="img/icon_pin.png" class="icon_pin">',
             verticalAlign: 'top',
             horizontalAlign: 'center'
           });
@@ -123,7 +131,7 @@ $(document).ready(function() {
           overlay = map.drawOverlay({
             lat: lat,
             lng: lng,
-            content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+            content: '<img src="img/icon_pin.png" class="icon_pin">',
             verticalAlign: 'top',
             horizontalAlign: 'center'
           });
@@ -142,7 +150,8 @@ $(document).ready(function() {
             overlay = map.drawOverlay({
           lat: lat,
             lng: lng,
-            content: '<div class="overlay">Center<div class="overlay_arrow above"></div></div>',
+            /*content: '<div class="overlay"><img src="img/icon_pin.png">EUGEN<div class="overlay_arrow above"></div></div>',*/
+            content: '<img src="img/icon_pin.png" class="icon_pin">',
             verticalAlign: 'top',
             horizontalAlign: 'center'
         });
@@ -231,7 +240,7 @@ $(document).ready(function() {
 					map.drawOverlay({
     					lat: tweet.geo.coordinates[0],
                 lng: tweet.geo.coordinates[1],
-                content: '<div class="overlay_search"><img src="'+tweet.profile_image+'" width="60px" height="60px" style=" -webkit-border-radius:5px; -moz-border-radius:5px;"><div class="overlay_arrow_search above_search"><div ><img class="icon_left" src="/img/icon_img.png" width="16px" height="16px"><img class="icon_right" src="/img/icon_fullscreen.png" width="16px" height="16px"></div></div></div>',
+                content: '<div class="overlay_search"><img src="'+tweet.profile_image+'" width="60px" height="60px" style=" -webkit-border-radius:5px; -moz-border-radius:5px;"><div class="overlay_arrow_search above_search"><div><a href="LINKHERE"><img class="icon_left" src="/img/icon_img.png" width="16px" height="16px"><img class="icon_right" src="/img/icon_fullscreen.png" width="16px" height="16px"></div></div></div>',
                 verticalAlign: 'top',
                 horizontalAlign: 'center'
 
