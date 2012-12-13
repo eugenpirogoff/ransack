@@ -104,15 +104,11 @@ $(document).ready(function() {
         click: function(e) {
 
           /*
-          mir ist klar das hier die coordinaten von dem Event zum einfach Pin hinclicken hinsollten, aber das funzt noch ned.
-          Darum auch erst ein mal den mittelpunkt genommen. Sorry Bro!        
-          var lat = e.latLng.$a;
-          var lng = e.latLng.ab;
+           * Setting the pin to the click position
           */
-          var lat = map.getCenter().lat();
-          var lng = map.getCenter().lng();
-
-          map.removeOverlays(overlay);
+          var lat = e.latLng.lat();
+          var lng = e.latLng.lng();
+          map.removeOverlay(overlay);
           overlay = map.drawOverlay({
             lat: lat,
             lng: lng,
