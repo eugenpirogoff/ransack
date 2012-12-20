@@ -16,7 +16,6 @@ var Parser = function(tweets) {
 	// Counting the website calls for synchronising issues
 	this.counter = 0;
 	this.tweets = tweets.results;
-	console.log("hahahahihihihi");
 	
 	this.formattedTweets = [];
 	// Goal, which the counter is supposed to reach

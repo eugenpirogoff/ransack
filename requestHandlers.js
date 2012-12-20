@@ -88,8 +88,8 @@ function postSearch(req,res) {
         		var result = JSON.parse(body);
     	    	tweets.results = tweets.results.concat(result.results);
     	    	// If still pages available, recursive call
-    	    	if (result.next_page) {
-    	    		console.log(result.next_page);
+    	    	if (result.next_page || result.next_page == null) {
+    	    		console.log("salt" + result.next_page);
     	    		requestTweets(twitterutils.TWITTERURL + result.next_page);
     	    	} 
     	    	// If no more pages, start parsing process !
@@ -104,7 +104,14 @@ function postSearch(req,res) {
         			parserObj.parseTweets();
         		}
         	} else {
-	        	console.log(error);
+	        	console.log("No more pages!");
+    	    	var parserObj = new twitterutils.Parser(tweets);
+        		// CALLBACK for EVERYTHING - return here !!
+        		parserObj.onLoaded = function(tweets) {
+        			res.setHeader('Content-Type','application/json');
+        			res.send(tweets);
+        		}
+        		parserObj.parseTweets();
         	}
         });
     }
