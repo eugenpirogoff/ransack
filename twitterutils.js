@@ -4,6 +4,7 @@
 **/
 var request = require("request");
 
+var TWITTERURL = "http://search.twitter.com/search.json";
 /**
 * Patterns
 **/
@@ -14,7 +15,9 @@ var request = require("request");
 var Parser = function(tweets) {
 	// Counting the website calls for synchronising issues
 	this.counter = 0;
-	this.tweets = JSON.parse(tweets).results;
+	this.tweets = tweets.results;
+	console.log("hahahahihihihi");
+	
 	this.formattedTweets = [];
 	// Goal, which the counter is supposed to reach
 	this.goal = this.tweets.length;
@@ -40,7 +43,6 @@ Parser.prototype.parseTweets = function() {
         // Filling the tweets with basic information
         this.parseTweet(this.tweets[i],function() {
         	self.counter++;
-        	console.log("Counter: " + self.counter + ", Goal: "+self.goal);
         	/** Calling onLoaded callback if all tweets have been processed **/
         	if ( self.counter == self.goal && self.onLoaded != undefined ) {
         		self.onLoaded(self.formattedTweets);
@@ -54,20 +56,25 @@ Parser.prototype.parseTweets = function() {
 */
 Parser.prototype.parseTweet = function(result,countercallback) {
 	var self = this;
-	// Calling parse URL´s from here. Once finished, callback will
-	// assemble the final JSON
-	if (result.geo != null) {
+	/*
+	 * Calling parse URL´s from here. Once finished, callback will
+	 * assemble the final JSON
+	 * Additionally: Performing validation if geo coord is set
+	 */
+	if (result.geo) {
     	this.parseUrls(result.entities.urls,function(urls) {
-    		self.formattedTweets.push( {
-	       		from_user:result.from_user,
-    	   		text:result.text,
-       			profile_image:result.profile_image_url,
-       			media: parseMedia(result),
-       			urls: urls,
-       			geo: result.geo
-       		});
-       		console.log(result.geo);
-       		// Calling the Countercallback
+    		/* Checking if there is media anyways */
+    		if ( parseMedia(result).length > 0 || urls.length > 0 ) {
+    			self.formattedTweets.push( {
+	       			from_user:result.from_user,
+    	   			text:result.text,
+	       			profile_image:result.profile_image_url,
+    	   			media: parseMedia(result).concat(urls),
+       				geo: result.geo
+       			});
+       			console.log(result.geo);
+       		}
+	       	// Calling the Countercallback
        		countercallback();
        	});
 	}
@@ -98,7 +105,6 @@ Parser.prototype.parseUrls = function(urls,callback) {
 	// Filling up the resolved array with the URLs
 	for (var i in urls) {
 		resolved.push(urls[i].expanded_url);
-		console.log(urls[i].expanded_url);
 	}
 	// Setting the goal
 	goal = resolved.length;
@@ -142,7 +148,6 @@ Parser.prototype.parseUrls = function(urls,callback) {
 		request(url,
         	function(error, response, body){
         		if (!error && response.statusCode == 200) {	
-        			console.log(counter);
         			if ( regex.test(body) ) {        		
         				imageurls.push(body.match(regex)[0].match(httpregex)[0]);
         			}
@@ -160,5 +165,18 @@ Parser.prototype.parseUrls = function(urls,callback) {
 */
 Parser.prototype.onLoaded;
 
+/**
+* Further functions for twitter handling
+*/
+function buildTwitterUrl(properties) {
+	var result = TWITTERURL;
+	result = result.concat('?');
+	for (prop in properties) {
+		result = result.concat('&' + prop + '=' + properties[prop]);
+	}
+	return result;
+}
 
 exports.Parser = Parser;
+exports.buildTwitterUrl = buildTwitterUrl;
+exports.TWITTERURL = TWITTERURL;

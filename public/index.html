@@ -11,6 +11,7 @@
 <script type="text/javascript" src="js/scripts.js"></script>
 <script type="text/javascript" src="js/gmaps.js"></script>
 <script type="text/javascript" src="js/bootstrap-dropdown.js"></script>
+<script type="text/javascript" src="js/client.js" />
 <script type="text/javascript">
 $(document).ready(function(){
     
@@ -45,13 +46,13 @@ $(document).ready(function(){
         <ul class="nav">
         <div class="navbar-form pull-center">
           <select class="input-small" id="formradius" name="formradius">
-          	<option>1</option>
-          	<option>5</option>
-            <option>10</option>
-            <option>20</option>
-            <option>30</option>
-            <option>40</option>
-            <option>50</option>
+          	<option value=1>1km</option>
+          	<option value=5>5km</option>
+            <option value=5>10km</option>
+            <option value=5>20km</option>
+            <option value=5>30km</option>
+            <option value=5>40km</option>
+            <option value=5>50km</option>
           </select>
           <input class="span2" id="formcoord1" name="formcoord1" type="text" placeholder="Latitude"> 
           <input class="span2" id="formcoord2" name="formcoord2" type="text" placeholder="Longtitude"> 
@@ -91,162 +92,5 @@ $(document).ready(function(){
 </div>
 <div class="mymap" id="map">
 </div>
-<script>
-
-
-$(document).ready(function() {
-  var map;
-    var overlay;
-    map = new GMaps({
-      div: '#map',
-        lat: -12.043333,
-        lng: -77.028333,
-        click: function(e) {
-
-          /*
-           * Setting the pin to the click position
-          */
-          var lat = e.latLng.lat();
-          var lng = e.latLng.lng();
-          map.removeOverlay(overlay);
-          overlay = map.drawOverlay({
-            lat: lat,
-            lng: lng,
-            content: '<img src="img/icon_pin_shadow.png" class="icon_pin">',
-            verticalAlign: 'top',
-            horizontalAlign: 'center'
-          });
-          $('#formcoord1').val(lat);
-          $('#formcoord2').val(lng);
-        },
-        dragend: function(e) {
-          var lat = map.getCenter().lat();
-          var lng = map.getCenter().lng();
-          
-          map.removeOverlay(overlay);
-          overlay = map.drawOverlay({
-            lat: lat,
-            lng: lng,
-            content: '<img src="img/icon_pin_shadow.png" class="icon_pin">',
-            verticalAlign: 'top',
-            horizontalAlign: 'center'
-          });
-          $('#formcoord1').val(lat);
-          $('#formcoord2').val(lng);
-        }
-    });
-    
-  GMaps.geolocate({
-        success: function(position){
-          var lat = position.coords.latitude;
-          var lng = position.coords.longitude;
-            map.setCenter(lat, lng);
-      $('input[name="formcoord1"]').val(lat);
-            $('input[name="formcoord2"]').val(lng);
-            overlay = map.drawOverlay({
-          lat: lat,
-            lng: lng,
-            /*content: '<div class="overlay"><img src="img/icon_pin.png">EUGEN<div class="overlay_arrow above"></div></div>',*/
-            content: '<img src="img/icon_pin_shadow.png" class="icon_pin">',
-            verticalAlign: 'top',
-            horizontalAlign: 'center'
-        });
-        },
-        error: function(error){
-          alert('Geolocation failed: '+error.message);
-        },
-        not_supported: function(){
-          $('input[name="formcoord1"]').val("error");
-          $('input[name="formcoord2"]').val("error");
-          alert("Your browser does not support geolocation");
-        },
-        always: function(){
-        }
-    });
-
-	// Checking if user Logged in
-	function isLoggedIn() {
-		$.ajax({
-			type: "GET",
-			url: "status",
-			success: function(response) {
-				if (response.login) {
-					setupLogin(response.username);
-				}
-			}
-		});
-	}
-	isLoggedIn();
-
-	// LOGIN PROCESS
-	$("#loginbutton").click(function() {
-		var username = $("#username").val();
-		var password = $("#password").val();
-
-		$.ajax({
-			type: "POST",
-			url: "sign_in",
-			data: {	username: username,
-					password: password
-					},
-			success: function(response) {
-				if (response.success) {
-					setupLogin(response.username);
-				}
-				else
-					alert("Login failed ( "+response.message+" ).");
-			}
-		});
-	});
-	
-	function setupLogin(username) {
-		$('#signup_dropdown').empty();
-		$('#signin_dropdown').empty();
-		$('#signin_dropdown').append(
-			'<a id="userDropdownLink" class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">'+
-            '</i> '+username+'<strong class="caret"></strong></a>' + 
-        	'<div id="userDropdown" class="dropdown-menu" style="padding: 5px; padding-bottom: 0px;">'+
-            '<li><a href="settings"><i class="icon-wrench"></i> Settings</a></li>'+
-            '<li><a href="logout"><i class="icon-remove-sign"></i> Logout</a></li></div>');
-	}
-	
-	/**
-	* SEARCH FUNCTION - ajax get request
-	*/
-	$("#searchbutton").click(function() {
-		// Assembling search data
-		var searchdata = {
-			formcoord1:$("#formcoord1").val(),
-			formcoord2:$("#formcoord2").val(),
-			formradius:$("#formradius").val()
-		};
-		$.ajax({
-			type: "POST",
-			url: "search",
-			data: {
-				lat: $("#formcoord1").val(),
-				lng: $("#formcoord2").val(),
-				radius: $("#formradius").val()
-			},
-			// This function will set the actual elements on the MAP
-			success: function(data) {
-				map.removeOverlays();
-				for(index in data) {
-					var tweet = data[index];
-					map.drawOverlay({
-    					lat: tweet.geo.coordinates[0],
-                lng: tweet.geo.coordinates[1],
-                content: '<div class="overlay_search"><img src="'+tweet.profile_image+'" width="60px" height="60px" style=" -webkit-border-radius:5px; -moz-border-radius:5px;"><div class="overlay_arrow_search above_search"><div><a href="LINKHERE"><img class="icon_left" src="/img/icon_img.png" width="16px" height="16px"><img class="icon_right" src="/img/icon_fullscreen.png" width="16px" height="16px"></div></div></div>',
-                verticalAlign: 'top',
-                horizontalAlign: 'center'
-
-    				});
-    			}
-			}
-		});
-	});
-    
-});
-</script>
 </body>
 </html>

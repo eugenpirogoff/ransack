@@ -9,7 +9,7 @@ var application_root = __dirname,
 * REQUEST HANDLERS
 * Sorted by GET and POST type
 */
-var twitterURL = "http://search.twitter.com/search.json?q=*&rpp=600&include_entities=true&result_type=mixed&geocode=";
+var twitterURL = "http://search.twitter.com/search.json";
 
 // GET HANDLERS
 function getSearch(req, res) {
@@ -60,8 +60,16 @@ function postSearch(req,res) {
     var lat = req.body.lat;
     var lng = req.body.lng;
     var radius = req.body.radius;
-
-	var searchstring = twitterURL+lat+","+lng+","+radius+"km";
+	var properties = {
+		q : '*',
+		rpp : '100',
+		include_entities : 'true',
+		result_type : 'mixed',
+		geocode : lat+','+lng+','+radius+'km',
+		page : '1'
+	}
+	var searchstring = twitterutils.buildTwitterUrl(properties);
+	console.log(searchstring);
 	console.log("Request to the following coordinates");
     console.log("Lat : "+lat);
     console.log("Long : "+lng);
@@ -71,23 +79,35 @@ function postSearch(req,res) {
   	* if succeeded, callback is defining the twitter parser and defining a callback
   	* method
   	*/
-  	request.get(searchstring,
-                function(error, response, body){
-        	       	if (!error && response.statusCode == 200) {
-    	    			// Getting parser
-        				var parserObj = new twitterutils.Parser(body);
-
-        				// CALLBACK for EVERYTHING - return here !!
-        				parserObj.onLoaded = function(tweets) {
-        					res.setHeader('Content-Type','application/json');
-        					res.send(tweets);
-        				}
-        				parserObj.parseTweets();
-        			} else {
-        			res.render('error');
+  	var tweets = { results : [] };
+  	requestTweets(searchstring);
+  	function requestTweets(url) {
+  		request.get(url,
+  		function(error, response, body){
+        	if (!error && response.statusCode == 200) {
+        		var result = JSON.parse(body);
+    	    	tweets.results = tweets.results.concat(result.results);
+    	    	// If still pages available, recursive call
+    	    	if (result.next_page) {
+    	    		console.log(result.next_page);
+    	    		requestTweets(twitterutils.TWITTERURL + result.next_page);
+    	    	} 
+    	    	// If no more pages, start parsing process !
+    	    	else {
+    	    		console.log("No more pages!");
+    	    		var parserObj = new twitterutils.Parser(tweets);
+        			// CALLBACK for EVERYTHING - return here !!
+        			parserObj.onLoaded = function(tweets) {
+        				res.setHeader('Content-Type','application/json');
+        				res.send(tweets);
         			}
-      			}
-    );
+        			parserObj.parseTweets();
+        		}
+        	} else {
+	        	console.log(error);
+        	}
+        });
+    }
 }
 
 function postSignUp(req,res) {
