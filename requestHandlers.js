@@ -2,8 +2,10 @@ var application_root = __dirname,
     path = require("path"),
     mongo = require("mongodb").MongoClient,
     request = require("request"),
-    twitterutils = require("./twitterutils");
-    hashcode = require("password-hash");
+    twitterutils = require("./twitterutils"),
+    hashcode = require("password-hash"),
+    log = require("./log");
+    
 
 /**
 * REQUEST HANDLERS
@@ -28,12 +30,11 @@ function getSearchByUser(req, res) {
 */
 function getRoot(req,res) {
 	if (req.session.user) {
-		res.render('index',{session:req.session.user});
-		console.log(req.session.user);
+		res.sendfile('public/index.html');	
 	}
-	else
-		console.log("No session");
-		res.render('index',{session:""});
+	else {
+		res.sendfile('public/index.html');
+	}
 }
 /**
 * Returning if user is already logged in
@@ -88,7 +89,7 @@ function postSearch(req,res) {
         		var result = JSON.parse(body);
     	    	tweets.results = tweets.results.concat(result.results);
     	    	// If still pages available, recursive call
-    	    	if (result.next_page || result.next_page == null) {
+    	    	if (result.next_page) {
     	    		console.log("salt" + result.next_page);
     	    		requestTweets(twitterutils.TWITTERURL + result.next_page);
     	    	} 

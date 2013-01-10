@@ -64,13 +64,14 @@ Parser.prototype.parseTweet = function(result,countercallback) {
     	this.parseUrls(result.entities.urls,function(urls) {
     		/* Checking if there is media anyways */
     		if ( parseMedia(result).length > 0 || urls.length > 0 ) {
-    			self.formattedTweets.push( {
+    			var formattedTweet =  {
 	       			from_user:result.from_user,
     	   			text:result.text,
 	       			profile_image:result.profile_image_url,
     	   			media: parseMedia(result).concat(urls),
        				geo: result.geo
-       			});
+       			};
+    			self.formattedTweets.push(formattedTweet);
        			console.log(result.geo);
        		}
 	       	// Calling the Countercallback

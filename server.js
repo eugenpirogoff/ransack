@@ -13,7 +13,12 @@ app.use(express.cookieParser("grumpy cat"));
 app.use(express.bodyParser());
 app.use(express.session());
 app.use(app.router);
-app.use(express.methodOverride());
+
+// Loggin
+app.use(function(req, res, next){
+  console.log("REQUEST\t-"+req.ip+"\t"+req.method+"\t"+req.url);
+  next();
+});
 app.use(express.static(path.join(application_root, "public")));
 app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 app.set('views', __dirname);
