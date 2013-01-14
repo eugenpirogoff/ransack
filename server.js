@@ -6,7 +6,7 @@ var application_root = __dirname,
     routes = require("./routes"),
     handlers = require("./requestHandlers");
 
-var app = express.createServer();
+var app = express();
 
 // Configuration of Express
 app.use(express.cookieParser("grumpy cat"));
