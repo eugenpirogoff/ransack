@@ -5,6 +5,7 @@ var application_root = __dirname,
     twitterutils = require("./twitterutils"),
     hashcode = require("password-hash"),
     log = require("./log");
+    persistence = require("./persistence");
     
 
 /**
@@ -57,6 +58,9 @@ function getLogout(req, res) {
 }
 
 // POST handlers
+/**
+* SEARCH handler for twitter request
+*/
 function postSearch(req,res) {
     var lat = req.body.lat;
     var lng = req.body.lng;
@@ -99,8 +103,8 @@ function postSearch(req,res) {
     	    		var parserObj = new twitterutils.Parser(tweets);
         			// CALLBACK for EVERYTHING - return here !!
         			parserObj.onLoaded = function(tweets) {
-        				res.setHeader('Content-Type','application/json');
-        				res.send(tweets);
+        				res.json(tweets);
+        				persistence.persistJSON(tweets);
         			}
         			parserObj.parseTweets();
         		}

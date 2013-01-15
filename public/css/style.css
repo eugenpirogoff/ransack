@@ -25,6 +25,39 @@ body {
   min-width: 200px;
   min-height: 200px;
 }
+/* AJAX Loader overlay */
+#ajaxoverlay
+{
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 50px;
+    background-color: rgba(0,0,0,0.4);
+    color: white;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    margin-left: 0px;
+    margin-top: 0px;
+}
+#ajaxgif
+{
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    width: 100px;
+    height: 60px;
+    text-align: center;
+    line-height: 50px;
+    background-color: rgba(0,0,0,0);
+    color: white;
+    position: absolute;
+    left: 48%;
+    top: 48%;
+    margin-left: 0px;
+    margin-top: 0px;
+}
 /* Overlay */
 .overlay{
   display:block;

@@ -1,3 +1,8 @@
+/**
+* CLIENT Script
+* Contains all important functions for dynamic AJAX loading and document manipulation
+*/
+
 $(document).ready(function() {
   	// Init GMaps
   	var map;
@@ -126,6 +131,7 @@ $(document).ready(function() {
 			formcoord2:$("#formcoord2").val(),
 			formradius:$("#formradius").val()
 		};
+		$("body").append("<div id='ajaxoverlay'><div id='ajaxgif'><img src='img/ajax-loader.gif' /></div></div>");
 		$.ajax({
 			type: "POST",
 			url: "search",
@@ -147,6 +153,7 @@ $(document).ready(function() {
                 		horizontalAlign: 'center'
     				});
     			}
+    			$("#ajaxoverlay").remove();
 			}
 		});
 	});
