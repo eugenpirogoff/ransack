@@ -72,7 +72,6 @@ Parser.prototype.parseTweet = function(result,countercallback) {
        				geo: result.geo
        			};
     			self.formattedTweets.push(formattedTweet);
-       			console.log(result.geo);
        		}
 	       	// Calling the Countercallback
        		countercallback();
@@ -141,7 +140,6 @@ Parser.prototype.parseUrls = function(urls,callback) {
 		/* Defining regexes for instagram */
 		var regex = /<img class="photo" [^>]*>/m;
 		var httpregex = /http[^"]*/;
-		console.log("INSTAGRAM");
 		/*
 		* Requesting Web URL, parsing the HTML code, looking for the required image url
 		*/

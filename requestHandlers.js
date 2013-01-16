@@ -41,9 +41,8 @@ function getRoot(req,res) {
 * Returning if user is already logged in
 */
 function getLoginStatus(req,res) {
-	res.setHeader('Content-Type','application/json');
 	if (req.session.user) {
-		res.send({login:true,username:req.session.user});
+		res.json({login:true,username:req.session.user});
 	} else {
 		res.send({login:false});
 	}
@@ -74,10 +73,7 @@ function postSearch(req,res) {
 		page : '1'
 	}
 	var searchstring = twitterutils.buildTwitterUrl(properties);
-	console.log(searchstring);
-	console.log("Request to the following coordinates");
-    console.log("Lat : "+lat);
-    console.log("Long : "+lng);
+	console.log("Request to "+lat+"   "+lng);
  
   	var data;
   	/* Requesting JSON data from twitter
@@ -85,7 +81,9 @@ function postSearch(req,res) {
   	* method
   	*/
   	var tweets = { results : [] };
+  	console.log("Sending request to twitter...");
   	requestTweets(searchstring);
+  	
   	function requestTweets(url) {
   		request.get(url,
   		function(error, response, body){
@@ -94,30 +92,27 @@ function postSearch(req,res) {
     	    	tweets.results = tweets.results.concat(result.results);
     	    	// If still pages available, recursive call
     	    	if (result.next_page) {
-    	    		console.log("salt" + result.next_page);
+    	    		console.log("Processing resultpage...");
     	    		requestTweets(twitterutils.TWITTERURL + result.next_page);
     	    	} 
     	    	// If no more pages, start parsing process !
     	    	else {
-    	    		console.log("No more pages!");
-    	    		var parserObj = new twitterutils.Parser(tweets);
-        			// CALLBACK for EVERYTHING - return here !!
-        			parserObj.onLoaded = function(tweets) {
-        				res.json(tweets);
-        				persistence.persistJSON(tweets);
-        			}
-        			parserObj.parseTweets();
+    	    		startParsing();
         		}
         	} else {
-	        	console.log("No more pages!");
+	        	startParsing();
+        	}
+        	function startParsing() {
+				console.log("Parsing tweets...");
     	    	var parserObj = new twitterutils.Parser(tweets);
         		// CALLBACK for EVERYTHING - return here !!
         		parserObj.onLoaded = function(tweets) {
-        			res.setHeader('Content-Type','application/json');
-        			res.send(tweets);
+        			res.json(tweets);
+        			persistence.persistJSON(tweets);
         		}
         		parserObj.parseTweets();
         	}
+        	
         });
     }
 }
@@ -132,22 +127,23 @@ function postSignUp(req,res) {
 	* Validating data
 	*/
 	if (!email_pattern.test(email)) {
-		res.render('error',{message:"Invalid Email Address"});
+		res.json({status:false,message:"Invalid Email Address"});
 		return;
 	}
 	if (pwd.length < 5) {
-		res.render('error',{message:"Password too short (minimum 5 characters)"});
+		res.json({status:false,message:"Password too short (minimum 5 characters)"});
 		return;
 	}
 	if (pwd != pwd_confirm) {
-		res.render('error',{message:"Passwords don´t match"});
+		res.json({status:false,message:"Passwords don´t match"});
 		return;
 	}
 	/* Building User JSON */
 	var user = {
 		username:username,
 		password:hashcode.generate(pwd),
-		email:email
+		email:email,
+		searches:{}
 	};
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
 		var collection = db.collection('users');
@@ -156,12 +152,12 @@ function postSignUp(req,res) {
 			if (!err && items.length == 0) {
 				collection.insert(user,function(err,result) {
 					if (!err)
-						res.render('error',{message:"Registration successful!"});
+						res.json({status:true,message:"Registration successful!"});
 					else
-						res.render('error',{message:"Registration failed (Database error " + err+ "."});
+						res.render({status:false,message:"Registration failed (Database error " + err+ "."});
 				});
 			} else {
-				res.render('error',{message:"Username or Email already registred!"});
+				res.json({status:false,message:"Username or Email already registred!"});
 			}
 		});
 	});
@@ -196,7 +192,7 @@ function postSignIn(req,res) {
 				result.username = items[0].username;
 				result.message = "Logged In";
 			}
-			res.send(result);
+			res.json(result);
 		});
 	});
 }
