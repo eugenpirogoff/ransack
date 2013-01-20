@@ -118,7 +118,7 @@ function postSearch(req,res) {
         			* Checking if user is logged in -> Saving search
         			****************************************/
         			if(req.session.user) {
-        				saveSearch(tweets);
+        				saveSearch(req.session.user,tweets);
         			}
         			
         			//persistence.persistJSON(tweets);
@@ -312,7 +312,19 @@ function postPreferences(req,res) {
 	});
 }
 
-function saveSearch(tweets) {
+function saveSearch(username,tweets) {
+	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+		var collection = db.collection('users');
+		collection.update({username:username},
+			{$push:{searches:tweets}},{w:1}, function(err,result) {
+			if (!err) {
+				console.log("Search saved!");
+			}
+			else {
+				console.log("Error saving search");
+			}
+		});
+	});
 }
 
 function postSearchByUser(req,res) {
