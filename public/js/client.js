@@ -81,9 +81,7 @@ $(document).ready(function() {
 	* Setting up lightbox plugin
 	*******************************************************/
 	function setupLightbox() {
-		$(function() {
-			$('a.lightbox').lightBox();
-		});
+		$('#lightbox').lightBox();
 	}
 	// Checking if user Logged in, server side is checking for cookie
 	function isLoggedIn() {
@@ -264,8 +262,8 @@ $(document).ready(function() {
 	                    }
     				});
     			}
-    			setupLightbox();
     			$("#ajaxoverlay").remove();
+    			setupLightbox();
 			}
 		});
 	});
@@ -274,7 +272,7 @@ $(document).ready(function() {
 	function getTweetOverlay(tweet) {
     	return '<div><img src="'+tweet.media[0]+'" class="small_image"><p><p>'
         	  +'<div class="btn-group">'
-                +'<a href="'+tweet.media[0]+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-fullscreen"></i>Show Image</a>'
+                +'<a rel="lightbox" href="'+tweet.media[0]+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-fullscreen"></i>Show Image</a>'
                 +'<a href="'+tweet.url+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-globe"></i> Open Tweet</a>'
          	+'</div>'
 		}   
