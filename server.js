@@ -16,8 +16,11 @@ app.use(app.router);
 
 // Loggin
 app.use(function(req, res, next){
-  console.log("REQUEST\t-"+req.ip+"\t"+req.method+"\t"+req.url);
-  next();
+	if (req.session) {
+		console.log(req.session);
+	}
+  	console.log("REQUEST\t-"+req.ip+"\t"+req.method+"\t"+req.url);
+  	next();
 });
 app.use(express.static(path.join(application_root, "public")));
 app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
