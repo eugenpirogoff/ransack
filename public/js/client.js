@@ -77,7 +77,14 @@ $(document).ready(function() {
         always: function(){
         }
     });
-
+	/******************************************************
+	* Setting up lightbox plugin
+	*******************************************************/
+	function setupLightbox() {
+		$(function() {
+			$('a.lightbox').lightBox();
+		});
+	}
 	// Checking if user Logged in, server side is checking for cookie
 	function isLoggedIn() {
 		$.ajax({
@@ -246,17 +253,18 @@ $(document).ready(function() {
 				map.removeOverlays();
 				for(index in data) {
 					var tweet = data[index];
-          map.addMarker({
-    					      lat: tweet.geo.coordinates[0],
-                    lng: tweet.geo.coordinates[1],
-                    title:"Image",
+          			map.addMarker({
+						lat: tweet.geo.coordinates[0],
+        	            lng: tweet.geo.coordinates[1],
+		    	        title:"Image",
                 		verticalAlign: 'top',
                 		horizontalAlign: 'center',
-                    infoWindow: {
-                                  content: getTweetOverlay(tweet)
-                    }
+	                    infoWindow: {
+                        	content: getTweetOverlay(tweet)
+	                    }
     				});
     			}
+    			setupLightbox();
     			$("#ajaxoverlay").remove();
 			}
 		});
@@ -264,9 +272,8 @@ $(document).ready(function() {
 
 
 	function getTweetOverlay(tweet) {
-    console.log(tweet);
-		return '<div><img src="'+tweet.media[0]+'" class="small_image"><br><button class="btn btn_mini"><i class="icon-fullscreen"></i>Full Image</button>'+
-    '<form type="GET" action="'+tweet.url+'" target="_blank"><button href="'+tweet.url[0]+'"" target="_new" class="btn btn_mini"><i class="icon-globe"></i>Show Tweet</button></form></div>'
+		return '<div><img src="'+tweet.media[0]+'" class="small_image"><br><a class="lightbox" href="'+tweet.media[0]+'">Hallooo</a><button class="lightbox" href="'+tweet.media[0]+'" class="btn btn_mini"><i class="icon-fullscreen"></i>Full Image</button>'+
+		    '<form type="GET" action="'+tweet.url+'" target="_blank"><button class="btn btn_mini"><i class="icon-globe"></i>Show Tweet</button></form></div>'
 	}   
 });
 
