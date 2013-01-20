@@ -61,9 +61,9 @@ function getLogout(req, res) {
 }
 
 // POST handlers
-/**
+/****************************************
 * SEARCH handler for twitter request
-*/
+*****************************************/
 function postSearch(req,res) {
     var lat = req.body.lat;
     var lng = req.body.lng;
@@ -109,10 +109,19 @@ function postSearch(req,res) {
         	function startParsing() {
 				console.log("Parsing tweets...");
     	    	var parserObj = new twitterutils.Parser(tweets);
-        		// CALLBACK for EVERYTHING - return here !!
+        		/*****************************************
+        		* Callback called when everything is done
+        		****************************************/
         		parserObj.onLoaded = function(tweets) {
         			res.json(tweets);
-        			persistence.persistJSON(tweets);
+        			/*****************************************
+        			* Checking if user is logged in -> Saving search
+        			****************************************/
+        			if(req.session.user) {
+        				saveSearch(tweets);
+        			}
+        			
+        			//persistence.persistJSON(tweets);
         		}
         		parserObj.parseTweets();
         	}
@@ -154,7 +163,7 @@ function postSignUp(req,res) {
 		username:username,
 		password:hashcode.generate(pwd),
 		email:email,
-		searches:{}
+		searches:[]
 	};
 	/******************************************************
 	* Connecting to mongodb
@@ -177,8 +186,6 @@ function postSignUp(req,res) {
 				response.message = "Username or Email already registered.";
 				res.json(response);
 			}
-			// Sending response
-
 		});
 	});
 }
@@ -231,7 +238,7 @@ function postPreferences(req,res) {
 		res.json(response);
 		return;
 	}
-	var username = req.body.username;
+	var username = req.session.user;
 	var email = req.body.email;
 	var pwdOld = req.body.passwordOld;
 	var pwd = req.body.password;
@@ -303,6 +310,9 @@ function postPreferences(req,res) {
 			});
 		});
 	});
+}
+
+function saveSearch(tweets) {
 }
 
 function postSearchByUser(req,res) {

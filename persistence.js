@@ -80,7 +80,11 @@ function generateThumbnails(folderpath) {
 			// Thumbnail Processing
 			for (var file in files) {
 				easyimage.resize({src:folderpath+"/"+files[file],dst: thumbpath+"/"+files[file],
-								width:128, height:128}
+								width:128, height:128}, 
+								function(err,stdout,stderr) {
+									if (err)
+										console.log(err);
+								}
 				);
 					
 			}
