@@ -46,6 +46,8 @@ $(document).ready(function() {
           $('#formcoord2').val(lng);
         }
     });
+    
+
     /*
     *	Performing geo location
     */
@@ -153,21 +155,22 @@ $(document).ready(function() {
                 		verticalAlign: 'top',
                 		horizontalAlign: 'center',
                     infoWindow: {
-                                  content: getTweetOverlay(tweet.media)
+                                  content: getTweetOverlay(tweet)
                     }
     				});
     			}
-
     			$("#ajaxoverlay").remove();
 			}
 		});
 	});
-  
 
 
-
-	function getTweetOverlay(media) {
-		return '<img src="'+media[0]+'" class="small_image hooker">'
-	}
-    
+	function getTweetOverlay(tweet) {
+    console.log(tweet);
+		return '<div><img src="'+tweet.media[0]+'" class="small_image"><br><button class="btn btn_mini"><i class="icon-fullscreen"></i>Full Image</button>'+
+    '<button href="'+tweet.url[0]+'"" target="_new" class="btn btn_mini"><i class="icon-globe"></i>Show Tweet</button></div>'
+	}   
 });
+
+
+
