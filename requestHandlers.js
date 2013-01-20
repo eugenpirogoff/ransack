@@ -13,6 +13,10 @@ var application_root = __dirname,
 * Sorted by GET and POST type
 */
 var twitterURL = "http://search.twitter.com/search.json";
+/**
+* Email validation pattern
+*/
+var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 
 // GET HANDLERS
 function getSearch(req, res) {
@@ -42,7 +46,7 @@ function getRoot(req,res) {
 */
 function getLoginStatus(req,res) {
 	if (req.session.user) {
-		res.json({login:true,username:req.session.user});
+		res.json({login:true,username:req.session.user,email:req.session.email});
 	} else {
 		res.send({login:false});
 	}
@@ -117,16 +121,18 @@ function postSearch(req,res) {
     }
 }
 
+/*******************************************************
+* SignUp process
+*******************************************************/
 function postSignUp(req,res) {
-	var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 	var username = req.body.username;
 	var pwd = req.body.password;
 	var pwd_confirm = req.body.password_confirm;
 	var email = req.body.email;
 	var response = { success: false };
-	/**
+	/******************************************************
 	* Validating data
-	*/
+	*******************************************************/
 	if (!email_pattern.test(email)) {
 		response.message = "Invalid Email Addresss.";
 	}
@@ -140,7 +146,6 @@ function postSignUp(req,res) {
 	 * If any error message has been created, send json and abort
 	 */
 	if (response.message) {
-		console.log("ooops");
 		res.json(response);
 		return;
 	}
@@ -151,9 +156,9 @@ function postSignUp(req,res) {
 		email:email,
 		searches:{}
 	};
-	/*
+	/******************************************************
 	* Connecting to mongodb
-	*/
+	*******************************************************/
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
 		var collection = db.collection('users');
 		collection.find({ '$or': [ { username:username }, { email:email } ]}).toArray(function(err,items) {
@@ -178,6 +183,9 @@ function postSignUp(req,res) {
 	});
 }
 
+/*******************************************************
+* SignIn process (login)
+*******************************************************/
 function postSignIn(req,res) {
 	var username = req.body.username;
 	var password = req.body.password;
@@ -201,11 +209,98 @@ function postSignIn(req,res) {
 			} else {
 				// Setting up user Session (=email)
 				req.session.user = items[0].username;
+				req.session.email = items[0].email;
 				result.success = true;
 				result.username = items[0].username;
+				result.email = items[0].email;
 				result.message = "Logged In";
 			}
 			res.json(result);
+		});
+	});
+}
+
+/*******************************************************
+* Preferences Request
+*******************************************************/
+function postPreferences(req,res) {
+	var response = { success:false };
+	// Login check
+	if(!req.session.user) {
+		response.message = "Not logged in. Nice try, rookie";
+		res.json(response);
+		return;
+	}
+	var username = req.body.username;
+	var email = req.body.email;
+	var pwdOld = req.body.passwordOld;
+	var pwd = req.body.password;
+	var pwd_confirm = req.body.password_confirm;
+	/***
+	* Connecting to Database
+	***/
+	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+		if(err) {
+			response.message = "Error connecting to database";
+			res.json(response);
+			return;
+		}
+		var collection = db.collection('users');
+		collection.find({username : username}).toArray(function(err,items) {
+			if (items.length == 0) {
+				result.message = "User doesn´t exist.";
+			}
+			var result = items[0];
+			console.log(result);
+			// Copying user to new user object
+			var newUser = result;
+			
+			// Checking if Email has been changed
+			if (email != result.email) {
+				if (email.match(email_pattern)) {
+					newUser.email = email;
+				}
+				else {
+					response.message = "Invalid Email address.";
+				}
+			}
+			// Checking if password change has been requested
+			if (pwdOld.length > 0) {
+				if (hashcode.verify(pwdOld,result.password)) {
+					// Validating new Passwords
+					if (pwd == pwd_confirm && pwd.length > 5) {
+						newUser.password = hashcode.generate(pwd);
+					}
+					else {
+						response.message = "Invalid (new) passwords.";
+					}
+				} else {
+					response.message = "Wrong password.";
+				}
+			}
+			// Error message thrown ?
+			if (response.message) {
+				res.json(response)
+				return;
+			}
+			/**
+			* Time to update the database
+			*/
+			collection.update({username:username},
+				{$set: { email: newUser.email, password: newUser.password }},
+				{w:1}, function(err,result) {
+					if (!err) {
+						console.log(result);
+						response.success = true;
+						response.message = "Changing successful!";
+						// Setting new session
+						req.session.user = newUser.username;
+						req.session.email = newUser.email;
+					} else {
+						response.message = "Error updating data.";
+					}
+					res.json(response);
+			});
 		});
 	});
 }
@@ -227,3 +322,4 @@ exports.postSearch = postSearch;
 exports.postSearchByUser = postSearchByUser;
 exports.postSignIn = postSignIn;
 exports.postSignUp = postSignUp;
+exports.postPreferences = postPreferences;

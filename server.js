@@ -16,9 +16,6 @@ app.use(app.router);
 
 // Loggin
 app.use(function(req, res, next){
-	if (req.session) {
-		console.log(req.session);
-	}
   	console.log("REQUEST\t-"+req.ip+"\t"+req.method+"\t"+req.url);
   	next();
 });
@@ -40,6 +37,7 @@ getRoutes['/search/user'] = handlers.getSearchByUser;
 var postRoutes = {};
 postRoutes['/sign_up'] = handlers.postSignUp;
 postRoutes['/sign_in'] = handlers.postSignIn;
+postRoutes['/preferences'] = handlers.postPreferences;
 postRoutes['/search'] = handlers.postSearch;
 postRoutes['/search/user'] = handlers.postSearchByUser;
 
