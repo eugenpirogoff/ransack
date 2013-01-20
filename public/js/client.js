@@ -111,6 +111,49 @@ $(document).ready(function() {
 		});
 	});
 	
+	/*
+	* Action Handler for signupbutton
+	*/
+	$("#signupbutton").click(function() {
+		var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
+		var username = $("#signupUsername").val();
+		var email = $("#signupEmail").val();
+		var pwd = $("#signupPassword").val();
+		var pwd_confirm = $("#signupPassword_confirm").val();
+		// Client sided PWD Check
+		if (pwd != pwd_confirm) {
+			alert("Passwords don´t match.");
+			return;
+		}
+		if (pwd.length < 5) {
+			alert("Password must have a minimum of 5 characters.");
+			return;
+		}
+		if (!email.match(email_pattern)) {
+			alert("Invalid Email address.");
+			return;
+		}
+		$.ajax({
+			type: "POST",
+			url: "sign_up",
+			data: { username: username,
+					password: pwd,
+					password_confirm: pwd_confirm,
+					email: email
+				},
+			success: function(response) {
+				if (response.success) {
+					alert("Registration of '"+username+"' successful.");
+				} else {
+					alert(response.message);
+				}
+			}
+		});
+	});
+	
+	/*
+	* Updating DOM after successful login process
+	*/
 	function setupLogin(username) {
 		$('#signup_dropdown').empty();
 		$('#signin_dropdown').empty();

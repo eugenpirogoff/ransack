@@ -123,19 +123,25 @@ function postSignUp(req,res) {
 	var pwd = req.body.password;
 	var pwd_confirm = req.body.password_confirm;
 	var email = req.body.email;
+	var response = { success: false };
 	/**
 	* Validating data
 	*/
 	if (!email_pattern.test(email)) {
-		res.json({status:false,message:"Invalid Email Address"});
-		return;
+		response.message = "Invalid Email Addresss.";
 	}
 	if (pwd.length < 5) {
-		res.json({status:false,message:"Password too short (minimum 5 characters)"});
-		return;
+		response.message = "Password too short (minimum 5 characters).";
 	}
 	if (pwd != pwd_confirm) {
-		res.json({status:false,message:"Passwords don´t match"});
+		response.message = "Passwords don´t match."
+	}
+	/*
+	 * If any error message has been created, send json and abort
+	 */
+	if (response.message) {
+		console.log("ooops");
+		res.json(response);
 		return;
 	}
 	/* Building User JSON */
@@ -145,20 +151,29 @@ function postSignUp(req,res) {
 		email:email,
 		searches:{}
 	};
+	/*
+	* Connecting to mongodb
+	*/
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
 		var collection = db.collection('users');
 		collection.find({ '$or': [ { username:username }, { email:email } ]}).toArray(function(err,items) {
 			// Checking if user doesn´t exist already
 			if (!err && items.length == 0) {
 				collection.insert(user,function(err,result) {
-					if (!err)
-						res.json({status:true,message:"Registration successful!"});
+					if (!err) {
+						response.success = true;
+						response.message = "Registration successful!";
+					}
 					else
-						res.render({status:false,message:"Registration failed (Database error " + err+ "."});
+						response.message = "Registration failed (Database error " + err+ ".";
+					res.json(response);
 				});
 			} else {
-				res.json({status:false,message:"Username or Email already registred!"});
+				response.message = "Username or Email already registered.";
+				res.json(response);
 			}
+			// Sending response
+
 		});
 	});
 }

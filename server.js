@@ -38,7 +38,7 @@ getRoutes['/search/:id'] = handlers.getSearchById;
 getRoutes['/search/user'] = handlers.getSearchByUser;
 
 var postRoutes = {};
-postRoutes['/signup'] = handlers.postSignUp;
+postRoutes['/sign_up'] = handlers.postSignUp;
 postRoutes['/sign_in'] = handlers.postSignIn;
 postRoutes['/search'] = handlers.postSearch;
 postRoutes['/search/user'] = handlers.postSearchByUser;
