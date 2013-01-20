@@ -29,7 +29,19 @@ function persistJSON(tweets) {
 		var counter = 0;
 		for (var tweet in tweets) {
 				var url = tweets[tweet].media[0];
-				// TODO
+				
+				// TODO, app is crashing with
+				//
+				//ransack/persistence.js:43
+				//    					callback(folderpath);
+				//    					^
+				//TypeError: undefined is not a function
+				//    at null.<anonymous> (/Users/Eugen/Code/ransack/persistence.js:43:10)
+				//    at EventEmitter.emit (events.js:126:20)
+				//   at WriteStream.flush (fs.js:1517:12)
+				//    at Object.oncomplete (fs.js:297:15)
+				//
+
 				var file_name = folderpath + "/" +  path.basename(url);
 
 			    var wstream = fs.createWriteStream(file_name);

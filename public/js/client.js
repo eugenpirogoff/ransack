@@ -3,7 +3,10 @@
 * Contains all important functions for dynamic AJAX loading and document manipulation
 */
 
+
+
 $(document).ready(function() {
+
   	// Init GMaps
   	var map;
     var overlay;
@@ -145,25 +148,29 @@ $(document).ready(function() {
 				map.removeOverlays();
 				for(index in data) {
 					var tweet = data[index];
-					map.drawOverlay({
-    					lat: tweet.geo.coordinates[0],
-                		lng: tweet.geo.coordinates[1],
-                		content: getTweetOverlay(tweet.media),
+					map.addMarker({
+    					      lat: tweet.geo.coordinates[0],
+                    lng: tweet.geo.coordinates[1],
+                    title:"Image",
                 		verticalAlign: 'top',
-                		horizontalAlign: 'center'
+                		horizontalAlign: 'center',
+                    infoWindow: {
+                                  content: getTweetOverlay(tweet.media)
+                    }
     				});
     			}
     			$("#ajaxoverlay").remove();
 			}
 		});
 	});
-	
+
+
+
+
+  
+
 	function getTweetOverlay(media) {
-		return '<div class="overlay_search">'
-				+'<img src="'+media[0]+'" width="60px" height="60px" style=" -webkit-border-radius:5px; -moz-border-radius:5px;">'
-				+'<div class="overlay_arrow_search above_search"><div>'
-				+'<a href="LINKHERE"><img class="icon_left" src="/img/icon_img.png" width="16px" height="16px">'
-				+'<img class="icon_right" src="/img/icon_fullscreen.png" width="16px" height="16px"></div></div></div>';
+		return '<img src="'+media[0]+'" class="small_image hooker">'
 	}
     
 });
