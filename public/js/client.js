@@ -3,8 +3,6 @@
 * Contains all important functions for dynamic AJAX loading and document manipulation
 */
 
-
-
 $(document).ready(function() {
 
   	// Init GMaps
@@ -148,7 +146,7 @@ $(document).ready(function() {
 				map.removeOverlays();
 				for(index in data) {
 					var tweet = data[index];
-					map.addMarker({
+          map.addMarker({
     					      lat: tweet.geo.coordinates[0],
                     lng: tweet.geo.coordinates[1],
                     title:"Image",
@@ -159,15 +157,14 @@ $(document).ready(function() {
                     }
     				});
     			}
+
     			$("#ajaxoverlay").remove();
 			}
 		});
 	});
-
-
-
-
   
+
+
 
 	function getTweetOverlay(media) {
 		return '<img src="'+media[0]+'" class="small_image hooker">'
