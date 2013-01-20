@@ -166,8 +166,6 @@ function postSignUp(req,res) {
 function postSignIn(req,res) {
 	var username = req.body.username;
 	var password = req.body.password;
-	// Setting header for JSON response
-	res.setHeader('Content-Type','application/json');
 		
 	var result = {};
 	result.success = false;
@@ -175,7 +173,7 @@ function postSignIn(req,res) {
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
 		if(err) {
 			result.message = "Error connecting to database";
-			res.send(result);
+			res.json(result);
 			return;
 		}
 		var collection = db.collection('users');
