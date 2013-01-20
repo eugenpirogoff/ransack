@@ -66,12 +66,11 @@ $(document).ready(function(){
           <li id="signup_dropdown" class="dropdown">
           	<a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign Up</a>
           	<div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
-          	<form action="/signup" method="post" accept-charset="UTF-8">
-              <input id="user_username" style="margin-bottom: 15px;" type="text" name="username" placeholder="username" size="30" />
-              <input id="user_email" style="margin-bottom: 15px;" type="email" name="email" placeholder="email" size="30" />
-              <input id="user_password" style="margin-bottom: 15px;" type="password" name="password" placeholder="password" size="30" />
-              <input id="user_password_confirm" style="margin-bottom: 15px;" type="password" name="password_confirm" placeholder="password(repeat)" size="30" />
-              <button class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;"> Sign Up </button>
+              <input id="signupUsername" style="margin-bottom: 15px;" type="text" name="username" placeholder="username" size="30" />
+              <input id="signupEmail" style="margin-bottom: 15px;" type="email" name="email" placeholder="email" size="30" />
+              <input id="signupPassword" style="margin-bottom: 15px;" type="password" name="password" placeholder="password" size="30" />
+              <input id="signupPassword_confirm" style="margin-bottom: 15px;" type="password" name="password_confirm" placeholder="password(repeat)" size="30" />
+              <button id="signupbutton" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;"> Sign Up </button>
             </form>
           	</div>
           </li>
@@ -86,28 +85,41 @@ $(document).ready(function(){
               <button id="loginbutton" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" name="commit" value="Sign In"> Sign In</button>
             </div>
           </li>
-          <a data-toggle="modal" href="#prefbutton" class="btn" ><i class="icon-wrench">
-              </i></a>
         </ul>
       </div>
     </div>
   </div>
 </div>
 
-<div id="prefbutton" class="modal hide fade in" style="display: none; ">
-            <div class="modal-header">
-              <a class="close" data-dismiss="modal">×</a>
-              <h3>Preferences</h3>
-            </div>
-            <div class="modal-body">
-              <h4>Options goes here</h4>
-              <p>You can add some text here</p>            
-            </div>
-            <div class="modal-footer">
-              <a href="#" class="btn btn-success">Save</a>
-              <a href="#" class="btn" data-dismiss="modal">Close</a>
-            </div>
-          </div>
+<!-- Preference Panel for logged in User -->
+<div id="prefpane" class="modal hide fade in" style="display: none; ">
+	<div class="modal-header">
+    	<a class="close" data-dismiss="modal">×</a>
+        <h3>Preferences</h3>
+    </div>
+    <div class="modal-body">
+    	<table border=0>
+    	<tr>
+    		<td align="right">Name: </td><td><input type="text" id="prefUsername" readonly /></td>
+    	</tr>
+    	<tr>
+    		<td align="right">Email: </td><td><input type="text" id="prefEmail" /></td></tr>
+    	<tr>
+    		<td><h5>Change Password: </h4></td>
+    	</tr>
+    	<tr>
+    		<td align="right">Old Password: </td><td><input type="password" id="prefPasswordOld" /></td></tr>
+    	<tr>
+    		<td align="right">New Password: </td><td><input type="password" id="prefPassword" /></td></tr></tr>
+    	<tr>
+    		<td align="right">New Password(repeat): </td><td><input type="password" id="prefPassword_confirm" /></td></tr>
+    	</table>
+    </div>
+    <div class="modal-footer">
+        <a id="prefSave" href="#" class="btn btn-success" data-dismiss="modal">Save</a>
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+    </div>
+</div>
 
 <div class="mymap" id="map">
 </div>

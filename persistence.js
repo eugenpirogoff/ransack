@@ -76,20 +76,19 @@ function generateThumbnails(folderpath) {
 				console.log("Error reading path "+folderpath);
 				return;
 			}
+			console.log("Creating thumbnails...");
 			// Thumbnail Processing
 			for (var file in files) {
-				console.log("rise and shine, mr freeman");
 				easyimage.resize({src:folderpath+"/"+files[file],dst: thumbpath+"/"+files[file],
 								width:128, height:128}, 
 								function(err,stdout,stderr) {
 									if (err)
 										console.log(err);
-									else
-									console.log("Resizing complete");
 								}
 				);
 					
 			}
+			console.log("Done!");
 		});
 				
 	});

@@ -85,7 +85,7 @@ $(document).ready(function() {
 			url: "status",
 			success: function(response) {
 				if (response.login) {
-					setupLogin(response.username);
+					setupLogin(response.username,response.email);
 				}
 			}
 		});
@@ -105,7 +105,7 @@ $(document).ready(function() {
 					},
 			success: function(response) {
 				if (response.success) {
-					setupLogin(response.username);
+					setupLogin(response.username,response.email);
 				}
 				else
 					alert("Login failed ( "+response.message+" ).");
@@ -113,15 +113,113 @@ $(document).ready(function() {
 		});
 	});
 	
-	function setupLogin(username) {
+	/*
+	* Action Handler for signupbutton
+	*/
+	$("#signupbutton").click(function() {
+		var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
+		var username = $("#signupUsername").val();
+		var email = $("#signupEmail").val();
+		var pwd = $("#signupPassword").val();
+		var pwd_confirm = $("#signupPassword_confirm").val();
+		// Client sided PWD Check
+		if (pwd != pwd_confirm) {
+			alert("Passwords don´t match.");
+			return;
+		}
+		if (pwd.length < 5) {
+			alert("Password must have a minimum of 5 characters.");
+			return;
+		}
+		if (!email.match(email_pattern)) {
+			alert("Invalid Email address.");
+			return;
+		}
+		$.ajax({
+			type: "POST",
+			url: "sign_up",
+			data: { username: username,
+					password: pwd,
+					password_confirm: pwd_confirm,
+					email: email
+				},
+			success: function(response) {
+				if (response.success) {
+					alert("Registration of '"+username+"' successful.");
+				} else {
+					alert(response.message);
+				}
+			}
+		});
+	});
+	/*
+	* Actionhandler for prefPane save button
+	*/
+	$('#prefSave').click(function() {
+		var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
+		// Getting input fields
+		var username = $("#prefUsername").val();
+		console.log(username);
+		var email = $("#prefEmail").val();
+		var passwordOld = $("#prefPasswordOld").val();
+		var password = $("#prefPassword").val();
+		var password_confirm = $("#prefPassword_confirm").val();
+		// Client sided PWD Check
+		if (passwordOld.length > 0) {
+			if (password != password_confirm) {
+				alert("Passwords don´t match.");
+				return;
+			}
+			if (password.length < 5) {
+				alert("New Password must have a minimum of 5 characters.");
+				return;
+			}
+		}
+		// Email check
+		if (!email.match(email_pattern)) {
+			alert("Invalid Email address.");
+			return;
+		}
+		/****************************
+		* Performing AJAX call
+		****************************/
+		$.ajax({
+			type: 	"POST",
+			url:	"/preferences",
+			data: {
+				username: username,
+				email: email,
+				passwordOld: passwordOld,
+				password: password,
+				password_confirm: password_confirm
+			},
+			success: function(response) {
+				if (response.success)
+					setupLogin(username,email);
+				alert(response.message);
+			}
+		});
+	});
+	/*
+	* Updating DOM after successful login process
+	*/
+	function setupLogin(username,email) {
 		$('#signup_dropdown').empty();
 		$('#signin_dropdown').empty();
 		$('#signin_dropdown').append(
 			'<a id="userDropdownLink" class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">'+
             '</i> '+username+'<strong class="caret"></strong></a>' + 
         	'<div id="userDropdown" class="dropdown-menu" style="padding: 5px; padding-bottom: 0px;">'+
-            '<li><a href="settings"><i class="icon-wrench"></i> Settings</a></li>'+
+            '<li><a id="prefpaneButton" data-toggle="modal" href="#prefpane" ><i class="icon-wrench"></i> Settings</a></li>'+
             '<li><a href="logout"><i class="icon-remove-sign"></i> Logout</a></li></div>');
+        /*
+        * Filling the preference Panel
+        */
+        $('#prefUsername').attr('value',username);
+        $('#prefEmail').attr('value',email);
+        $('#prefPasswordOld').attr('value',"");
+        $('#prefPassword').attr('value',"");
+        $('#prefPassword_confirm').attr('value',"");
 	}
 	
 	/**

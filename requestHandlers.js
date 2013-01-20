@@ -13,6 +13,10 @@ var application_root = __dirname,
 * Sorted by GET and POST type
 */
 var twitterURL = "http://search.twitter.com/search.json";
+/**
+* Email validation pattern
+*/
+var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 
 // GET HANDLERS
 function getSearch(req, res) {
@@ -42,7 +46,7 @@ function getRoot(req,res) {
 */
 function getLoginStatus(req,res) {
 	if (req.session.user) {
-		res.json({login:true,username:req.session.user});
+		res.json({login:true,username:req.session.user,email:req.session.email});
 	} else {
 		res.send({login:false});
 	}
@@ -57,9 +61,9 @@ function getLogout(req, res) {
 }
 
 // POST handlers
-/**
+/****************************************
 * SEARCH handler for twitter request
-*/
+*****************************************/
 function postSearch(req,res) {
     var lat = req.body.lat;
     var lng = req.body.lng;
@@ -105,10 +109,19 @@ function postSearch(req,res) {
         	function startParsing() {
 				console.log("Parsing tweets...");
     	    	var parserObj = new twitterutils.Parser(tweets);
-        		// CALLBACK for EVERYTHING - return here !!
+        		/*****************************************
+        		* Callback called when everything is done
+        		****************************************/
         		parserObj.onLoaded = function(tweets) {
         			res.json(tweets);
-        			persistence.persistJSON(tweets);
+        			/*****************************************
+        			* Checking if user is logged in -> Saving search
+        			****************************************/
+        			if(req.session.user) {
+        				saveSearch(tweets);
+        			}
+        			
+        			//persistence.persistJSON(tweets);
         		}
         		parserObj.parseTweets();
         	}
@@ -117,25 +130,32 @@ function postSearch(req,res) {
     }
 }
 
+/*******************************************************
+* SignUp process
+*******************************************************/
 function postSignUp(req,res) {
-	var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 	var username = req.body.username;
 	var pwd = req.body.password;
 	var pwd_confirm = req.body.password_confirm;
 	var email = req.body.email;
-	/**
+	var response = { success: false };
+	/******************************************************
 	* Validating data
-	*/
+	*******************************************************/
 	if (!email_pattern.test(email)) {
-		res.json({status:false,message:"Invalid Email Address"});
-		return;
+		response.message = "Invalid Email Addresss.";
 	}
 	if (pwd.length < 5) {
-		res.json({status:false,message:"Password too short (minimum 5 characters)"});
-		return;
+		response.message = "Password too short (minimum 5 characters).";
 	}
 	if (pwd != pwd_confirm) {
-		res.json({status:false,message:"Passwords don´t match"});
+		response.message = "Passwords don´t match."
+	}
+	/*
+	 * If any error message has been created, send json and abort
+	 */
+	if (response.message) {
+		res.json(response);
 		return;
 	}
 	/* Building User JSON */
@@ -143,26 +163,36 @@ function postSignUp(req,res) {
 		username:username,
 		password:hashcode.generate(pwd),
 		email:email,
-		searches:{}
+		searches:[]
 	};
+	/******************************************************
+	* Connecting to mongodb
+	*******************************************************/
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
 		var collection = db.collection('users');
 		collection.find({ '$or': [ { username:username }, { email:email } ]}).toArray(function(err,items) {
 			// Checking if user doesn´t exist already
 			if (!err && items.length == 0) {
 				collection.insert(user,function(err,result) {
-					if (!err)
-						res.json({status:true,message:"Registration successful!"});
+					if (!err) {
+						response.success = true;
+						response.message = "Registration successful!";
+					}
 					else
-						res.render({status:false,message:"Registration failed (Database error " + err+ "."});
+						response.message = "Registration failed (Database error " + err+ ".";
+					res.json(response);
 				});
 			} else {
-				res.json({status:false,message:"Username or Email already registred!"});
+				response.message = "Username or Email already registered.";
+				res.json(response);
 			}
 		});
 	});
 }
 
+/*******************************************************
+* SignIn process (login)
+*******************************************************/
 function postSignIn(req,res) {
 	var username = req.body.username;
 	var password = req.body.password;
@@ -186,13 +216,103 @@ function postSignIn(req,res) {
 			} else {
 				// Setting up user Session (=email)
 				req.session.user = items[0].username;
+				req.session.email = items[0].email;
 				result.success = true;
 				result.username = items[0].username;
+				result.email = items[0].email;
 				result.message = "Logged In";
 			}
 			res.json(result);
 		});
 	});
+}
+
+/*******************************************************
+* Preferences Request
+*******************************************************/
+function postPreferences(req,res) {
+	var response = { success:false };
+	// Login check
+	if(!req.session.user) {
+		response.message = "Not logged in. Nice try, rookie";
+		res.json(response);
+		return;
+	}
+	var username = req.session.user;
+	var email = req.body.email;
+	var pwdOld = req.body.passwordOld;
+	var pwd = req.body.password;
+	var pwd_confirm = req.body.password_confirm;
+	/***
+	* Connecting to Database
+	***/
+	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+		if(err) {
+			response.message = "Error connecting to database";
+			res.json(response);
+			return;
+		}
+		var collection = db.collection('users');
+		collection.find({username : username}).toArray(function(err,items) {
+			if (items.length == 0) {
+				result.message = "User doesn´t exist.";
+			}
+			var result = items[0];
+			console.log(result);
+			// Copying user to new user object
+			var newUser = result;
+			
+			// Checking if Email has been changed
+			if (email != result.email) {
+				if (email.match(email_pattern)) {
+					newUser.email = email;
+				}
+				else {
+					response.message = "Invalid Email address.";
+				}
+			}
+			// Checking if password change has been requested
+			if (pwdOld.length > 0) {
+				if (hashcode.verify(pwdOld,result.password)) {
+					// Validating new Passwords
+					if (pwd == pwd_confirm && pwd.length > 5) {
+						newUser.password = hashcode.generate(pwd);
+					}
+					else {
+						response.message = "Invalid (new) passwords.";
+					}
+				} else {
+					response.message = "Wrong password.";
+				}
+			}
+			// Error message thrown ?
+			if (response.message) {
+				res.json(response)
+				return;
+			}
+			/**
+			* Time to update the database
+			*/
+			collection.update({username:username},
+				{$set: { email: newUser.email, password: newUser.password }},
+				{w:1}, function(err,result) {
+					if (!err) {
+						console.log(result);
+						response.success = true;
+						response.message = "Changing successful!";
+						// Setting new session
+						req.session.user = newUser.username;
+						req.session.email = newUser.email;
+					} else {
+						response.message = "Error updating data.";
+					}
+					res.json(response);
+			});
+		});
+	});
+}
+
+function saveSearch(tweets) {
 }
 
 function postSearchByUser(req,res) {
@@ -212,3 +332,4 @@ exports.postSearch = postSearch;
 exports.postSearchByUser = postSearchByUser;
 exports.postSignIn = postSignIn;
 exports.postSignUp = postSignUp;
+exports.postPreferences = postPreferences;
