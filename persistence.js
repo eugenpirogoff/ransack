@@ -13,8 +13,7 @@ function persistJSON(tweets) {
 		if(!exists) {
 			fs.mkdir(folderpath,0755,function(err) {
 				if(!err){
-					fetchImages();
-					generateThumbnails(folderpath);
+					fetchImages(generateThumbnails);
 				} else {
 					console.log("Error creating folder "+folderpath);
 				}
