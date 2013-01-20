@@ -272,10 +272,13 @@ $(document).ready(function() {
 
 
 	function getTweetOverlay(tweet) {
-		return '<div><img src="'+tweet.media[0]+'" class="small_image"><br><a class="lightbox" href="'+tweet.media[0]+'">Hallooo</a><button class="lightbox" href="'+tweet.media[0]+'" class="btn btn_mini"><i class="icon-fullscreen"></i>Full Image</button>'+
-		    '<form type="GET" action="'+tweet.url+'" target="_blank"><button class="btn btn_mini"><i class="icon-globe"></i>Show Tweet</button></form></div>'
-	}   
-});
+    	return '<div><img src="'+tweet.media[0]+'" class="small_image"><p><p>'
+        	  +'<div class="btn-group">'
+                +'<a href="'+tweet.media[0]+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-fullscreen"></i>Show Image</a>'
+                +'<a href="'+tweet.url+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-globe"></i> Open Tweet</a>'
+         	+'</div>'
+		}   
+	});
 
 
 
