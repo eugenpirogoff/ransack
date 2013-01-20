@@ -69,7 +69,7 @@ Parser.prototype.parseTweet = function(result,countercallback) {
     	   			text:result.text,
 	       			profile_image:result.profile_image_url,
     	   			media: parseMedia(result).concat(urls),
-       				geo: result.geo
+       				geo: result.geo,
        				url: "http://twitter.com/"+result.from_user+"/status/"+result.id
        			};
     			self.formattedTweets.push(formattedTweet);

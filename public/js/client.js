@@ -264,9 +264,8 @@ $(document).ready(function() {
 
 
 	function getTweetOverlay(tweet) {
-    console.log(tweet);
 		return '<div><img src="'+tweet.media[0]+'" class="small_image"><br><button class="btn btn_mini"><i class="icon-fullscreen"></i>Full Image</button>'+
-    '<button href="'+tweet.url[0]+'"" target="_new" class="btn btn_mini"><i class="icon-globe"></i>Show Tweet</button></div>'
+    '<button href="'+tweet.url+'" target="_blank" class="btn btn_mini"><i class="icon-globe"></i>Show Tweet</button></div>'
 	}   
 });
 
