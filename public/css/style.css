@@ -20,10 +20,20 @@ body {
 
 /* mymap class */
 .mymap  {
+  position: absolute; 
   margin-top: 40px;
-  margin-left: 0px;
+  margin-left: 20%;
   min-width: 200px;
+  max-width: 80%;
   min-height: 200px;
+}
+#sidebar {
+  position: absolute; 
+  margin-top: 40px;
+  margin-left: 1%;
+  width: 19%;
+  height: 90%;
+  overflow: auto;
 }
 /* AJAX Loader overlay */
 #ajaxoverlay

@@ -1,6 +1,0 @@
-style
-  body {
-    padding: 50px;
-    font: 16px "Helvetica Neue", Helvetica;
-  }
-h1 #{message}

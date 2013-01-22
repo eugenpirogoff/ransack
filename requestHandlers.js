@@ -4,8 +4,11 @@ var application_root = __dirname,
     request = require("request"),
     twitterutils = require("./twitterutils"),
     hashcode = require("password-hash"),
-    log = require("./log");
-    persistence = require("./persistence");
+    log = require("./log"),
+    persistence = require("./persistence"),
+    fs = require("fs"),
+    util = require("util"),
+    url = require("url");
     
 
 /**
@@ -19,27 +22,47 @@ var twitterURL = "http://search.twitter.com/search.json";
 var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 
 // GET HANDLERS
-function getSearch(req, res) {
-    
+function getSearches(req, res) {
+	if (!req.session.user) {
+		res.end();
+		return;
+	}
+	var result;
+	var username = req.session.user;
+	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+		if(err) {
+			console.log("Database error");
+			return;
+		}
+		var collection = db.collection('users');
+		collection.find({username : username}).toArray(function(err,items) {
+			// Setting up user Session (=email)
+			if (!err) {
+				result = items[0].searches;
+				res.json(result);
+			}
+		});
+	});
 }
 
-function getSearchById(req, res) {
-    res.send('GET event to /search/:id returns a speacial Search by its ID');
-}
-function getSearchByUser(req, res) {
-    res.send('GET event to /search/user returns a list of Searches for a special User');
-}
 /*
 * Method for the / request
 * Checking if a session cookie exists
 */
 function getRoot(req,res) {
-	if (req.session.user) {
-		res.sendfile('public/index.html');	
-	}
-	else {
-		res.sendfile('public/index.html');
-	}
+	res.sendfile('public/index.html');	
+}
+/************************************
+* GET for zipped images
+************************************/
+function getDownloadSearch(req,res) {
+	/*if (!req.session.user) {
+		res.end();
+		return;
+	}*/
+	var url_parts = url.parse(req.url, true);
+	var timestamp = url_parts.query.timestamp;
+
 }
 /**
 * Returning if user is already logged in
@@ -68,6 +91,7 @@ function postSearch(req,res) {
     var lat = req.body.lat;
     var lng = req.body.lng;
     var radius = req.body.radius;
+    var address = req.body.address?req.body.address:false;
 	var properties = {
 		q : '*',
 		rpp : '100',
@@ -112,16 +136,20 @@ function postSearch(req,res) {
         		/*****************************************
         		* Callback called when everything is done
         		****************************************/
-        		parserObj.onLoaded = function(tweets) {
-        			res.json(tweets);
+        		parserObj.onLoaded = function(result) {
+        			if (address) {
+        				result.address = address;
+        			}
+        			result.latlng = {lat:lat,lng:lng};
+        			res.json(result);
         			/*****************************************
         			* Checking if user is logged in -> Saving search
         			****************************************/
-        			if(req.session.user) {
-        				saveSearch(req.session.user,tweets);
+        			if (req.session.user) {
+        				persistence.persistJSON(req.session.user,result,address);
         			}
         			
-        			//persistence.persistJSON(tweets);
+
         		}
         		parserObj.parseTweets();
         	}
@@ -163,7 +191,7 @@ function postSignUp(req,res) {
 		username:username,
 		password:hashcode.generate(pwd),
 		email:email,
-		searches:[]
+		searches:{}
 	};
 	/******************************************************
 	* Connecting to mongodb
@@ -187,6 +215,11 @@ function postSignUp(req,res) {
 				res.json(response);
 			}
 		});
+	});
+	/*******************************************************
+	* Creating user images dir
+	*******************************************************/
+	fs.mkdir("images/"+username,0755,function(err) {
 	});
 }
 
@@ -312,36 +345,56 @@ function postPreferences(req,res) {
 	});
 }
 
-function saveSearch(username,tweets) {
+
+
+function postDeleteSearch(req,res) {
+	var response = { success : false };
+	var timestamp = req.body.timestamp;
+	var username = req.session.user;
+	/***
+	* Connecting to Database
+	***/
 	mongo.connect("mongodb://localhost:27017/", function(err, db) {
+		if(err) {
+			response.message = "Error connecting to database";
+			res.json(response);
+			return;
+		}
 		var collection = db.collection('users');
-		collection.update({username:username},
-			{$push:{searches:tweets}},{w:1}, function(err,result) {
-			if (!err) {
-				console.log("Search saved!");
+		collection.find({username : username}).toArray(function(err,items) {
+			if (items.length == 0) {
+				response.message = "User doesn´t exist.";
 			}
-			else {
-				console.log("Error saving search");
-			}
+			var result = items[0];
+			console.log(result);
+			// Deleting given timestamp
+			delete result.searches[timestamp];
+			/**
+			* Time to update the database
+			*/
+			collection.update({username:username},
+				{$set: { searches: result.searches }},
+				{w:1}, function(err,result) {
+					if (!err) {
+						response.success = true;
+						persistence.removeSearch(req.session.user,timestamp);
+					}
+					res.json(response);
+			});
 		});
 	});
-}
-
-function postSearchByUser(req,res) {
-  res.send('POST event to /search/user and creates a Search Event of the given Data for a special User');
 }
 
 /* EXPORTS */
 // GET
 exports.getRoot = getRoot;
 exports.getLogout = getLogout;
-exports.getSearch = getSearch;
-exports.getSearchById = getSearchById;
-exports.getSearchByUser = getSearchByUser;
+exports.getSearches = getSearches;
 exports.getLoginStatus = getLoginStatus;
+exports.getDownloadSearch = getDownloadSearch;
 // POST
 exports.postSearch = postSearch;
-exports.postSearchByUser = postSearchByUser;
+exports.postDeleteSearch = postDeleteSearch;
 exports.postSignIn = postSignIn;
 exports.postSignUp = postSignUp;
 exports.postPreferences = postPreferences;

@@ -8,6 +8,10 @@ $(document).ready(function() {
   	// Init GMaps
   	var map;
     var overlay;
+    var isLoggedIn = false;
+    var searches = {};
+    var geocoder = new google.maps.Geocoder();
+    
     map = new GMaps({
       div: '#map',
         lat: -12.043333,
@@ -77,14 +81,9 @@ $(document).ready(function() {
         always: function(){
         }
     });
-	/******************************************************
-	* Setting up lightbox plugin
-	*******************************************************/
-	function setupLightbox() {
-		$('#lightbox').lightBox();
-	}
+	
 	// Checking if user Logged in, server side is checking for cookie
-	function isLoggedIn() {
+	function checkLogin() {
 		$.ajax({
 			type: "GET",
 			url: "status",
@@ -95,7 +94,7 @@ $(document).ready(function() {
 			}
 		});
 	}
-	isLoggedIn();
+	checkLogin();
 
 	// LOGIN PROCESS
 	$("#loginbutton").click(function() {
@@ -111,6 +110,7 @@ $(document).ready(function() {
 			success: function(response) {
 				if (response.success) {
 					setupLogin(response.username,response.email);
+					setupSearches();
 				}
 				else
 					alert("Login failed ( "+response.message+" ).");
@@ -225,58 +225,166 @@ $(document).ready(function() {
         $('#prefPasswordOld').attr('value',"");
         $('#prefPassword').attr('value',"");
         $('#prefPassword_confirm').attr('value',"");
+        // Updating isLoggedIn bool
+        isLoggedIn = true;
 	}
 	
-	/**
+	/**************************************************
+	* Fetching saved searches
+	**************************************************/
+	function setupSearches(username,email) {
+		$.ajax({
+			type: "GET",
+			url: "searches",
+			success: function(data) {
+				$('#searches').empty();
+				for(prop in data) {
+					// Filling search dict
+					searches[data[prop].timestamp] = data[prop];
+					appendSearch(data[prop]);
+				}
+			}
+		});
+	}
+	
+	/***************************************************
+	* Appending given search
+	**************************************************/
+	function appendSearch(search) {
+		var date = new Date(search.timestamp);
+		var dateStr = date.getDay() + '.' + date.getMonth() + ' ' + date.getFullYear() +
+					' - ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+		$('#searches').prepend(
+		'<div id='+search.timestamp+'><hr>'+search.address+'<br>'+dateStr+'<br>'+
+		'<a id="view'+search.timestamp+'">View</a> | '+
+		'<a href="downloadSearch?timestamp='+search.timestamp+'" id="download'+search.timestamp+'">Download</a> | '+
+		'<a id="delete'+search.timestamp+'">Delete</a>');
+		// Setting EventListeners
+		$('#view'+search.timestamp).click(function() {
+			viewSearchHandler(search.timestamp);
+		});
+		if (!isLoggedIn) {
+			$('#download'+search.timestamp).click(function() {
+				downloadSearchHandler(search.timestamp);
+			});
+		}
+		$('#delete'+search.timestamp).click(function() {
+			deleteSearchHandler(search.timestamp);
+		});
+	}
+	/***************************************************
 	* SEARCH FUNCTION - ajax get request
-	*/
+	****************************************************/
 	$("#searchbutton").click(function() {
 		// Assembling search data
 		var searchdata = {
-			formcoord1:$("#formcoord1").val(),
-			formcoord2:$("#formcoord2").val(),
-			formradius:$("#formradius").val()
+			lat:$("#formcoord1").val(),
+			lng:$("#formcoord2").val(),
+			radius:$("#formradius").val()
 		};
-		$("body").append("<div id='ajaxoverlay'><div id='ajaxgif'><img src='img/ajax-loader.gif' /></div></div>");
-		$.ajax({
-			type: "POST",
-			url: "search",
-			data: {
-				lat: $("#formcoord1").val(),
-				lng: $("#formcoord2").val(),
-				radius: $("#formradius").val()
-			},
-			// This function will set the actual elements on the MAP
-			success: function(data) {
-				map.removeOverlays();
-				for(index in data) {
-					var tweet = data[index];
-          			map.addMarker({
-						lat: tweet.geo.coordinates[0],
-        	            lng: tweet.geo.coordinates[1],
-		    	        title:"Image",
-                		verticalAlign: 'top',
-                		horizontalAlign: 'center',
-	                    infoWindow: {
-                        	content: getTweetOverlay(tweet)
-	                    }
-    				});
-    			}
-    			$("#ajaxoverlay").remove();
-    			setupLightbox();
+		// Trying to aquire address via reverse geocoding
+		var latlng = new google.maps.LatLng(searchdata.lat,searchdata.lng);
+		geocoder.geocode({latLng:latlng},function(results,status) {
+			if (results[0]) {
+				searchdata.address = results[0].formatted_address;
 			}
+			$("body").append("<div id='ajaxoverlay'><div id='ajaxgif'><img src='img/ajax-loader.gif' /></div></div>");
+			$.ajax({
+				type: "POST",
+				url: "search",
+				data: searchdata,
+				// This function will set the actual elements on the MAP
+				success: function(data) {
+					searches[data.timestamp] = data;
+					viewTweets(data,true);
+				}
+			});	
 		});
+		
 	});
-
+	
+	function viewTweets(data,isSearch) {
+		map.removeOverlays();
+		map.removeMarkers();
+		for(index in data.tweets) {
+			var tweet = data.tweets[index];
+          	map.addMarker({
+				lat: tweet.geo.coordinates[0],
+        	    lng: tweet.geo.coordinates[1],
+		    	title:"Image",
+                verticalAlign: 'top',
+                horizontalAlign: 'center',
+	            infoWindow: {
+                    content: getTweetOverlay(tweet)
+	            }
+    		});
+    	}
+    	$("#ajaxoverlay").remove();
+    	if (isSearch)
+    		appendSearch(data);
+	}
 
 	function getTweetOverlay(tweet) {
     	return '<div><img src="'+tweet.media[0]+'" class="small_image"><p><p>'
         	  +'<div class="btn-group">'
-                +'<a rel="lightbox" href="'+tweet.media[0]+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-fullscreen"></i>Show Image</a>'
+                +'<a rel="lightbox[gallery]" href="'+tweet.media[0]+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-fullscreen"></i>Show Image</a>'
                 +'<a href="'+tweet.url+'" target="_blank" class="btn btn-info btn-mini"><i class="icon-white icon-globe"></i> Open Tweet</a>'
-         	+'</div>'
-		}   
-	});
-
-
-
+         	+'</div>';
+	} 
+	
+	/********************************
+	* Event Handler for searches links
+	********************************/
+	function viewSearchHandler(timestamp) {
+		var lat = searches[timestamp].latlng.lat;
+		var lng = searches[timestamp].latlng.lng;
+		// Setting map coordinates
+		map.setCenter(lat,lng);
+		viewTweets(searches[timestamp],false);
+	}
+	function downloadSearchHandler(timestamp) {
+		if (isLoggedIn) {
+			$.ajax({
+				type:"POST",
+				url:"downloadSearch",
+				data: { timestamp: timestamp },
+				success: function(data) {
+					if(data.success) {
+						$('#'+timestamp).remove();
+						delete searches[timestamp];
+					} else {
+						alert("Database error. Sorry :(");
+					}
+				}
+			});
+		}
+		else {
+			alert("Please login for this function");
+		}
+	}
+	function deleteSearchHandler(timestamp) {
+		if (!confirm("Are you sure?"))
+			return;
+			
+		if (isLoggedIn) {
+			$.ajax({
+				type:"POST",
+				url:"deleteSearch",
+				data: { timestamp: timestamp },
+				success: function(data) {
+					if(data.success) {
+						$('#'+timestamp).remove();
+						delete searches[timestamp];
+					} else {
+						alert("Database error. Sorry :(");
+					}
+				}
+			});
+		}
+		else {
+			$('#'+timestamp).remove();
+			delete searches[timestamp];
+		}
+	}
+	
+});

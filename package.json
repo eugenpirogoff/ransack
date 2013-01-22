@@ -19,7 +19,9 @@
     "jade":"latest",
 	"password-hash":"latest",
 	"easyimage":"latest",
-	"nodemailer":"latest"
+	"nodemailer":"latest",
+	"node-native-zip":"latest",
+	"rimraf":"latest"
   },
   "author": "Jan Christian Nikles & Eugen Pirogoff",
   "license": "MIT",

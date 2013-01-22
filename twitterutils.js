@@ -44,7 +44,8 @@ Parser.prototype.parseTweets = function() {
         	self.counter++;
         	/** Calling onLoaded callback if all tweets have been processed **/
         	if ( self.counter == self.goal && self.onLoaded != undefined ) {
-        		self.onLoaded(self.formattedTweets);
+        		var result = { timestamp: Date.now(), tweets:self.formattedTweets };
+        		self.onLoaded(result);
         	}
         });
     }
@@ -72,13 +73,13 @@ Parser.prototype.parseTweet = function(result,countercallback) {
        				geo: result.geo,
        				url: "http://twitter.com/"+result.from_user+"/status/"+result.id_str
        			};
-       			console.log(result.id);
     			self.formattedTweets.push(formattedTweet);
        		}
 	       	// Calling the Countercallback
        		countercallback();
        	});
 	}
+	// If Geo not set, just callback
 	else
 		countercallback();
 }

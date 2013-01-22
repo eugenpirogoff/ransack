@@ -30,16 +30,15 @@ var getRoutes = {};
 getRoutes['/'] = handlers.getRoot;
 getRoutes['/logout'] = handlers.getLogout;
 getRoutes['/status'] = handlers.getLoginStatus;
-getRoutes['/search'] = handlers.getSearch;
-getRoutes['/search/:id'] = handlers.getSearchById;
-getRoutes['/search/user'] = handlers.getSearchByUser;
+getRoutes['/searches'] = handlers.getSearches;
+getRoutes['/downloadSearch'] = handlers.getDownloadSearch;
 
 var postRoutes = {};
 postRoutes['/sign_up'] = handlers.postSignUp;
 postRoutes['/sign_in'] = handlers.postSignIn;
 postRoutes['/preferences'] = handlers.postPreferences;
 postRoutes['/search'] = handlers.postSearch;
-postRoutes['/search/user'] = handlers.postSearchByUser;
+postRoutes['/deleteSearch'] = handlers.postDeleteSearch;
 
 // Configuring GET routes
 routes.configureRoutes(app,'get',getRoutes);
