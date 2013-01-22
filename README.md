@@ -3,16 +3,19 @@ Ransack
 
 MME2 - Image Search with Twitter API and Geolocation
 
+![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image1.png)
 
 
 
 
 Installation
 ----
-$ npm install
+$ npm install	
 
-this installs all the needed Modules from package.js to  ~node_mmodules/
+this installs all the needed Modules from package.js to ~node_mmodules/
 
+
+We need Imagemagick for the parser. http://www.imagemagick.org
 
 $ brew install imagemagick
 
