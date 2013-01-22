@@ -146,7 +146,8 @@ Parser.prototype.parseUrls = function(urls,callback) {
 		/*
 		* Requesting Web URL, parsing the HTML code, looking for the required image url
 		*/
-		request(url,
+		var options = { url: url, pool:{maxSockets: 500 }};
+		request(options,
         	function(error, response, body){
         		if (!error && response.statusCode == 200) {	
         			if ( regex.test(body) ) {        		

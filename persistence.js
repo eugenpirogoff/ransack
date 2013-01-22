@@ -36,8 +36,9 @@ function persistJSON(username, data,address) {
 		var counter = 0;
 		console.log("Downloading images...");
 		for (var tweet in data.tweets) {
+
 				var url = data.tweets[tweet].media[0];
-				
+				var options = { url: url, pool:{maxSockets:500}};				
 				var file_name = folderpath + "/" +  path.basename(url);
 
 			    var wstream = fs.createWriteStream(file_name);
@@ -52,7 +53,7 @@ function persistJSON(username, data,address) {
     				}
 			    });
 
-			    request(url).pipe( wstream );
+			    request(options).pipe( wstream );
 		}
 	}	
 	

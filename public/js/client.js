@@ -238,8 +238,8 @@ $(document).ready(function() {
 			url: "searches",
 			success: function(data) {
 				$('#searches').empty();
+				searches = {};
 				for(prop in data) {
-					searches = {};
 					// Filling search dict
 					searches[data[prop].timestamp] = data[prop];
 					appendSearch(data[prop]);
