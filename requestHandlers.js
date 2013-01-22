@@ -56,12 +56,19 @@ function getRoot(req,res) {
 * GET for zipped images
 ************************************/
 function getDownloadSearch(req,res) {
-	/*if (!req.session.user) {
+	if (!req.session.user) {
 		res.end();
 		return;
-	}*/
+	}
+	res.setHeader("Content-type: application/octet-stream");
+	res.setHeader('Content-disposition: attachment; filename="images.zip"'); 
 	var url_parts = url.parse(req.url, true);
 	var timestamp = url_parts.query.timestamp;
+	var filePath = 'images/'+req.session.user+'/'+timestamp+'/images.zip'; 
+	// Creating readStream
+	var readStream = fs.createReadStream(filePath);
+    // We replaced all the event handlers with a simple call to util.pump()
+    util.pump(readStream, res);
 
 }
 /**

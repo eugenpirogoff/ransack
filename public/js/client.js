@@ -239,6 +239,7 @@ $(document).ready(function() {
 			success: function(data) {
 				$('#searches').empty();
 				for(prop in data) {
+					searches = {};
 					// Filling search dict
 					searches[data[prop].timestamp] = data[prop];
 					appendSearch(data[prop]);
@@ -257,17 +258,15 @@ $(document).ready(function() {
 		$('#searches').prepend(
 		'<div id='+search.timestamp+'><hr>'+search.address+'<br>'+dateStr+'<br>'+
 		'<a id="view'+search.timestamp+'">View</a> | '+
-		'<a href="downloadSearch?timestamp='+search.timestamp+'" id="download'+search.timestamp+'">Download</a> | '+
+		'<a id="download'+search.timestamp+'">Download</a> | '+
 		'<a id="delete'+search.timestamp+'">Delete</a>');
 		// Setting EventListeners
 		$('#view'+search.timestamp).click(function() {
 			viewSearchHandler(search.timestamp);
 		});
-		if (!isLoggedIn) {
-			$('#download'+search.timestamp).click(function() {
-				downloadSearchHandler(search.timestamp);
-			});
-		}
+		$('#download'+search.timestamp).click(function() {
+			downloadSearchHandler(search.timestamp);
+		});
 		$('#delete'+search.timestamp).click(function() {
 			deleteSearchHandler(search.timestamp);
 		});
@@ -344,19 +343,7 @@ $(document).ready(function() {
 	}
 	function downloadSearchHandler(timestamp) {
 		if (isLoggedIn) {
-			$.ajax({
-				type:"POST",
-				url:"downloadSearch",
-				data: { timestamp: timestamp },
-				success: function(data) {
-					if(data.success) {
-						$('#'+timestamp).remove();
-						delete searches[timestamp];
-					} else {
-						alert("Database error. Sorry :(");
-					}
-				}
-			});
+			document.location = 'downloadSearch?timestamp='+timestamp;
 		}
 		else {
 			alert("Please login for this function");
