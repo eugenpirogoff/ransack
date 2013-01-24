@@ -4,7 +4,7 @@ Ransack
 MME2 - Image Search with Twitter API and Geolocation
 
 ![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image1.png)
-
+![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image2.png)
 
 
 
