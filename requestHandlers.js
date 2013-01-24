@@ -17,6 +17,9 @@ var application_root = __dirname,
 var twitterURL = "http://search.twitter.com/search.json";
 var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 var spamTolerance = 5000; // Spam timeout in ms
+
+// Dictionary, saving tokens with session ID as key
+var sessionTokens = {};
 /**
 * REQUEST HANDLERS
 * Sorted by GET and POST type
@@ -51,8 +54,12 @@ function getSearches(req, res) {
 * Checking if a session cookie exists
 */
 function getRoot(req,res) {
-	req.session.checkSum = Date.now();
+	var token = Date.now();
+	// Setting session
+	req.session.checkSum = token;
 	req.session.isFirst = true;
+	sessionTokens[req.session._id] = token 
+	// Delivering Page
 	res.sendfile('public/index.html');	
 }
 /************************************
@@ -101,11 +108,12 @@ function postSearch(req,res) {
 	/**************************************************
 	* Spam protection
 	**************************************************/
-	if (!req.session.checkSum || spamProtection(req.session,req.body.checkSum)) {
-		res.json({error:"Spam spam spam"});
-		console.log("SPAAAM");
+	if (!req.session || spamProtection(req.session,req.body.checkSum)) {
+		res.json({error:"You shall not spam !"});
+		console.log("Spam detected...");
 		return;
 	}
+	sessionTokens[req.session._id] = 0;
     var lat = req.body.lat;
     var lng = req.body.lng;
     var radius = req.body.radius;
@@ -127,7 +135,7 @@ function postSearch(req,res) {
   	* method
   	*/
   	var tweets = { results : [] };
-  	//console.log("Sending request to twitter...");
+  	console.log("Sending request to twitter...");
   	//console.log("Processing resultpage...");
   	requestTweets(searchstring);
   	
@@ -158,12 +166,15 @@ function postSearch(req,res) {
         			if (address) {
         				result.address = address;
         			}
-        			var checkSum = Date.now();
+        			// Generating new token (UNIX timestamp)
+        			var token = Date.now();
         			result.latlng = {lat:lat,lng:lng};
-        			result.checkSum = checkSum;
-        			req.session.checkSum = checkSum;
+        			result.checkSum = token;
+        			// Updating session tokens
+        			req.session.checkSum = token;
         			req.session.isFirst = false;
         			res.json(result);
+        			sessionTokens[req.session._id] = token;
         			/*****************************************
         			* Checking if user is logged in -> Saving search
         			****************************************/
@@ -185,10 +196,9 @@ function postSearch(req,res) {
 * return: true = spam, false = OK !
 */
 function spamProtection(session,checksum) {
-	if (!session || checksum)
+	if (session.isFirst)
 		return false;
-	var time = Date.now() - session.lastRequest;
-	if (sessioncheck != checksum)
+	if (sessionTokens[session._id] != checksum)
 		return true;
 	else
 		return false;

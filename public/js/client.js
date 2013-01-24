@@ -278,8 +278,8 @@ $(document).ready(function() {
 	* SEARCH FUNCTION - ajax get request
 	****************************************************/
 	$("#searchbutton").click(function() {
-		if (Date.now() - lastClick < 4000 && !isFirstSearch) {
-			alert("Don´t spam please");
+		if (Date.now() - lastClick < 3000 && !isFirstSearch) {
+			$('#patience').modal({show:true});
 			return;
 		}
 		isFirstSearch = false;
@@ -306,7 +306,7 @@ $(document).ready(function() {
 				success: function(data) {
 					if (data.error) {
 						$("#ajaxoverlay").remove();
-						alert("I like turtles"+data.error);
+						alert(data.error);
 						return;
 					}
 					checkSum = data.checkSum;
