@@ -229,7 +229,7 @@ $(document).ready(function() {
 		$('#signin_dropdown').append(
 			'<a id="userDropdownLink" class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">'+
             '</i> '+username+'<strong class="caret"></strong></a>' + 
-        	'<div id="userDropdown" class="dropdown-menu" style="padding: 5px; padding-bottom: 0px;">'+
+        	'<div id="userDropdown" class="dropdown-menu" style="padding: 5px; padding-bottom: 5px;">'+
             '<li><a id="prefpaneButton" data-toggle="modal" href="#prefpane" ><i class="icon-wrench"></i> Settings</a></li>'+
             '<li><a href="logout"><i class="icon-remove-sign"></i> Logout</a></li></div>');
         /*
