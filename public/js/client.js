@@ -100,7 +100,13 @@ $(document).ready(function() {
 	checkLogin();
 
 	// LOGIN PROCESS
-	$("#loginbutton").click(function() {
+	$("#loginbutton").click(login);
+	$("#signin_dropdown").keypress(function(e) {
+		if (e.which == 13) {
+			login();
+		}
+	});
+	function login() {
 		var username = $("#username").val();
 		var password = $("#password").val();
 
@@ -119,12 +125,18 @@ $(document).ready(function() {
 					alert("Login failed ( "+response.message+" ).");
 			}
 		});
-	});
+	}
 	
 	/*
 	* Action Handler for signupbutton
 	*/
-	$("#signupbutton").click(function() {
+	$("#signupbutton").click(signup);
+	$("#signup_dropdown").keypress(function(e) {
+		if (e.which == 13) {
+			signup();
+		}
+	});
+	function signup() {
 		var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 		var username = $("#signupUsername").val();
 		var email = $("#signupEmail").val();
@@ -159,7 +171,7 @@ $(document).ready(function() {
 				}
 			}
 		});
-	});
+	}
 	/*
 	* Actionhandler for prefPane save button
 	*/
@@ -275,9 +287,15 @@ $(document).ready(function() {
 		});
 	}
 	/***************************************************
-	* SEARCH FUNCTION - ajax get request
+	* SEARCH FUNCTION - ajax post request
 	****************************************************/
-	$("#searchbutton").click(function() {
+	$("#searchbutton").click(search);
+	$("#searchbar").keypress(function(e) {
+		if (e.which == 13)
+			search();
+	});
+	
+	function search() {
 		if (Date.now() - lastClick < 3000 && !isFirstSearch) {
 			$('#patience').modal({show:true});
 			return;
@@ -316,7 +334,7 @@ $(document).ready(function() {
 			});	
 		});
 		
-	});
+	}
 	
 	function viewTweets(data,isSearch) {
 		map.removeOverlays();
@@ -389,5 +407,9 @@ $(document).ready(function() {
 			delete searches[timestamp];
 		}
 	}
+	
+	/************************************
+	* Key Listener for login forms
+	************************************/
 	
 });

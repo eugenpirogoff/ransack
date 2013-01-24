@@ -23,4 +23,5 @@ $(window).resize(function(){
 	$('.mymap').css("height",$(window).innerHeight()-40);
 	$('.mymap').css("width",$(window).innerWidth()-220);
 	$('.mymap').css("min-widtht",$(window).innerWidth()-220);
+	$('#sidebar').css("height",$(window).innerHeight()-40);
 })
