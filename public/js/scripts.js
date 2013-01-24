@@ -11,13 +11,16 @@ $(function() {
 $(document).ready(function(){
 	$('.mymap').css("min-height",$(window).innerHeight()-40);
 	$('.mymap').css("height",$(window).innerHeight()-40);
-	$('.mymap').css("width",$(window).innerWidth());
-	$('.mymap').css("min-widtht",$(window).innerWidth());
+	$('.mymap').css("width",$(window).innerWidth()-220);
+	$('.mymap').css("min-widtht",$(window).innerWidth()-220);
+	$('#sidebar').css("height",$(window).innerHeight()-40);
+
+
 })
     
 $(window).resize(function(){
 	$('.mymap').css("min-height",$(window).innerHeight()-40);
 	$('.mymap').css("height",$(window).innerHeight()-40);
-	$('.mymap').css("width",$(window).innerWidth());
-	$('.mymap').css("min-widtht",$(window).innerWidth());
+	$('.mymap').css("width",$(window).innerWidth()-220);
+	$('.mymap').css("min-widtht",$(window).innerWidth()-220);
 })

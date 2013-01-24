@@ -259,10 +259,10 @@ $(document).ready(function() {
 		var dateStr = date.getDay() + '.' + date.getMonth() + ' ' + date.getFullYear() +
 					' - ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 		$('#searches').prepend(
-		'<div id='+search.timestamp+'><hr>'+search.address+'<br>'+dateStr+'<br>'+
-		'<a id="view'+search.timestamp+'">View</a> | '+
-		'<a id="download'+search.timestamp+'">Download</a> | '+
-		'<a id="delete'+search.timestamp+'">Delete</a>');
+		'<div class="border1" id='+search.timestamp+'>'+search.address+'<br>'+dateStr+'<br>'+
+		'<a class="btn btn-info btn-mini" id="view'+search.timestamp+'"><i class="icon-white icon-search"></i>View</a> '+
+		'<a class="btn btn-info btn-mini" id="download'+search.timestamp+'"><i class="icon-white icon-download"></i>Download</a> '+
+		'<a class="btn btn-danger btn-mini" id="delete'+search.timestamp+'"><i class="icon-white icon-remove-sign"></i>Delete</a></div>');
 		// Setting EventListeners
 		$('#view'+search.timestamp).click(function() {
 			viewSearchHandler(search.timestamp);

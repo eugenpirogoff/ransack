@@ -11,6 +11,7 @@ body {
 @media (max-width: 979px) {
   body {
     padding-top: 0;
+    overflow: hidden;
   }
 }
 
@@ -22,16 +23,16 @@ body {
 .mymap  {
   position: absolute; 
   margin-top: 40px;
-  margin-left: 20%;
+  margin-left: 220px;
   min-width: 200px;
-  max-width: 80%;
   min-height: 200px;
+  overflow: hidden;
 }
 #sidebar {
   position: absolute; 
   margin-top: 40px;
-  margin-left: 1%;
-  width: 19%;
+  margin-left: 5px auto;
+  width:  220px;
   height: 90%;
   overflow: auto;
 }
@@ -126,6 +127,17 @@ body {
   margin-top: 10;
 }
 
+.border1{
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  border-color: #797979;
+  border-width: 1px; 
+  border-style: solid;
+  background-color: #ebebeb;
+  margin: 6px;
+  padding: 5px;
+}
 
 
 
