@@ -15,7 +15,7 @@ function persistJSON(username, data,address) {
 		if(!exists) {
 			fs.mkdir(folderpath,0755,function(err) {
 				if(!err){
-					fetchImages(function() {
+					fetchImages(data,folderpath,function() {
 						zipFiles(folderpath);
 						saveSearch(username,data);
 					});
@@ -25,38 +25,64 @@ function persistJSON(username, data,address) {
 			});
 		}
 		else {
-			fetchImages(function() {
+			fetchImages(data,folderpath,function() {
 				zipFiles(folderpath);
 				saveSearch(username,data,address);
 			});
 		}
 	});
-	
-	function fetchImages(callback) {
-		var counter = 0;
-		console.log("Downloading images...");
-		for (var tweet in data.tweets) {
+}
 
-				var url = data.tweets[tweet].media[0];
+/*
+ * Fetching images from given tweet Data
+ */
+function fetchImages(data,folderpath,callback) {
+		console.log("Downloading images...");
+		var start = 0;
+		var end;
+		console.log("Downloading start=0 length="+data.tweets.length);
+		if (data.tweets.length<=40) {
+			end = data.tweets.length;
+			fetchImage(start,end,callback);
+		} else {
+			end = 40;
+			fetchImage(start,end,recursiveCall);
+		}
+		function recursiveCall(result) {
+			start = result;
+			if (data.tweets.length > start+40) {
+				end = start + 40;
+				console.log("Rec call");
+				fetchImage(start,end,recursiveCall);
+			} else {
+				console.log("abort");
+				end = data.tweets.length;
+				fetchImage(start,end,callback);
+			}
+		}
+		
+		function fetchImage(start,end, next) {
+			console.log("Downloading start="+start+" end="+end);
+			var counter = start;
+			for (i = start; i<end;i++) {
+				var url = data.tweets[i].media[0];
 				var options = { url: url, pool:{maxSockets:500}};				
 				var file_name = folderpath + "/" +  path.basename(url);
 
 			    var wstream = fs.createWriteStream(file_name);
 
 			    wstream.on('error', function (err) {
-	    		    console.log(err, url);
-			    });
+    			    console.log(err, url);
+	    		});
 
    				wstream.on( 'close', function(){
-    				if (++counter == data.tweets.length) {
-    					callback(folderpath);
-    				}
-			    });
-
-			    request(options).pipe( wstream );
+    				if (++counter == end) {
+    					next(end);
+	    			}
+				});
+				request(options).pipe( wstream );
+			}
 		}
-	}	
-	
 }
 
 function zipFiles(folderpath) {
