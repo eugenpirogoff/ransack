@@ -1,19 +1,20 @@
 /* Main Stylesheet */
 /* Import Bootstrap styles and Responsive styles */
 @import url('bootstrap.css');
-@import url('bootstrap-responsive.css');
+
 
 /* Add top padding for navbar-top-fixed */
 body {
+	overflow: hidden;
  /* padding-bottom: 40px; */
   }
 /* Remove top padding when top navbar goes static in narrow viewports */
-@media (max-width: 979px) {
+/*@media (max-width: 979px) {
   body {
     padding-top: 0;
     overflow: hidden;
   }
-}
+}*/
 
 .span2 {
   padding: 10px;
