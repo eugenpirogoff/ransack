@@ -278,10 +278,10 @@ $(document).ready(function() {
 	* SEARCH FUNCTION - ajax get request
 	****************************************************/
 	$("#searchbutton").click(function() {
-		if (Date.now() - lastClick < 4000 && !isFirstSearch) {
-			alert("Don´t spam please");
+		/*if (Date.now() - lastClick < 4000 && !isFirstSearch) {
+			$('#patience').modal({show:true});
 			return;
-		}
+		}*/
 		isFirstSearch = false;
 		lastClick = Date.now();
 		// Assembling search data
