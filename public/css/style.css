@@ -6,6 +6,7 @@
 /* Add top padding for navbar-top-fixed */
 body {
 	overflow: hidden;
+
  /* padding-bottom: 40px; */
   }
 /* Remove top padding when top navbar goes static in narrow viewports */
@@ -15,6 +16,18 @@ body {
     overflow: hidden;
   }
 }*/
+.navfix{
+  /*min-width: 600px;
+  */
+}
+
+.resultfix{
+  margin:10px;
+  margin-right: 85px;
+  margin-left: 85px;
+  color: grey;
+}
+
 
 .span2 {
   padding: 10px;
@@ -24,16 +37,17 @@ body {
 .mymap  {
   position: absolute; 
   margin-top: 40px;
-  margin-left: 220px;
+  margin-left: 245px;
   min-width: 200px;
   min-height: 200px;
   overflow: hidden;
 }
 #sidebar {
+  font-size: small;
   position: absolute; 
   margin-top: 40px;
   margin-left: 5px auto;
-  width:  220px;
+  width:  245px;
   height: 90%;
   overflow: auto;
   background: #f2f2f2; /* Old browsers */
@@ -148,7 +162,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', end
   border-style: solid;
   background-color: #ebebeb;
   margin: 6px;
-  padding: 5px;
+  padding: 6px;
+  margin-right: 15px;
 }
 
 

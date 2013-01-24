@@ -11,8 +11,8 @@ $(function() {
 $(document).ready(function(){
 	$('.mymap').css("min-height",$(window).innerHeight()-40);
 	$('.mymap').css("height",$(window).innerHeight()-40);
-	$('.mymap').css("width",$(window).innerWidth()-220);
-	$('.mymap').css("min-widtht",$(window).innerWidth()-220);
+	$('.mymap').css("width",$(window).innerWidth()-245);
+	$('.mymap').css("min-widtht",$(window).innerWidth()-245);
 	$('#sidebar').css("height",$(window).innerHeight()-40);
 
 
@@ -21,7 +21,7 @@ $(document).ready(function(){
 $(window).resize(function(){
 	$('.mymap').css("min-height",$(window).innerHeight()-40);
 	$('.mymap').css("height",$(window).innerHeight()-40);
-	$('.mymap').css("width",$(window).innerWidth()-220);
-	$('.mymap').css("min-widtht",$(window).innerWidth()-220);
+	$('.mymap').css("width",$(window).innerWidth()-245);
+	$('.mymap').css("min-widtht",$(window).innerWidth()-245);
 	$('#sidebar').css("height",$(window).innerHeight()-40);
 })

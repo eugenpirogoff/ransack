@@ -17,25 +17,19 @@
 <script type="text/javascript" src="js/client.js" /></script>
 <script type="text/javascript" src="js/infobubble.js"/></script>
 <script type="text/javascript" src="js/bootstrap-modal.js"/></script>
-<script type="text/javascript">
-$(document).ready(function(){
-   
-});
-</script>
 
   </head>
   <body>
-  <div class="navbar navbar-fixed-top">
+  <div class="navbar navbar-fixed-top navfix">
   <div class="navbar-inner">
     <div class="container">
       <!-- Collapsable nav bar -->
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+      <a class="btn btn-navbar" >
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
       <a class="brand">Ransack</a>
-      <div class="nav-collapse">
         <ul class="nav">
           <li class="active">
             <a href="/">
@@ -88,7 +82,6 @@ $(document).ready(function(){
             </div>
           </li>
         </ul>
-      </div>
     </div>
   </div>
 </div>
@@ -138,7 +131,7 @@ $(document).ready(function(){
 <div class="content">
 	<div class="mymap" id="map"></div>
 	<div id="sidebar">
-		<h5>Results</h5>
+		<div class="resultfix"><h5>Results</h5></div>
 		<div id="searches"></div>
 	</div>
 </div>
