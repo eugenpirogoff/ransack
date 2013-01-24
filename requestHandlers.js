@@ -11,15 +11,16 @@ var application_root = __dirname,
     url = require("url");
     
 
+/*************************************************
+* CONSTANTS
+*************************************************/
+var twitterURL = "http://search.twitter.com/search.json";
+var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
+var spamTolerance = 5000; // Spam timeout in ms
 /**
 * REQUEST HANDLERS
 * Sorted by GET and POST type
 */
-var twitterURL = "http://search.twitter.com/search.json";
-/**
-* Email validation pattern
-*/
-var email_pattern = /^\w+\@\w+\.\w{2,3}$/;
 
 // GET HANDLERS
 function getSearches(req, res) {
@@ -50,6 +51,8 @@ function getSearches(req, res) {
 * Checking if a session cookie exists
 */
 function getRoot(req,res) {
+	req.session.checkSum = Date.now();
+	req.session.isFirst = true;
 	res.sendfile('public/index.html');	
 }
 /************************************
@@ -95,6 +98,14 @@ function getLogout(req, res) {
 * SEARCH handler for twitter request
 *****************************************/
 function postSearch(req,res) {
+	/**************************************************
+	* Spam protection
+	**************************************************/
+	if (!req.session.checkSum || spamProtection(req.session,req.body.checkSum)) {
+		res.json({error:"Spam spam spam"});
+		console.log("SPAAAM");
+		return;
+	}
     var lat = req.body.lat;
     var lng = req.body.lng;
     var radius = req.body.radius;
@@ -108,7 +119,7 @@ function postSearch(req,res) {
 		page : '1'
 	}
 	var searchstring = twitterutils.buildTwitterUrl(properties);
-	console.log("Request to "+lat+"   "+lng);
+	//console.log("Request to "+lat+"   "+lng);
  
   	var data;
   	/* Requesting JSON data from twitter
@@ -116,7 +127,8 @@ function postSearch(req,res) {
   	* method
   	*/
   	var tweets = { results : [] };
-  	console.log("Sending request to twitter...");
+  	//console.log("Sending request to twitter...");
+  	//console.log("Processing resultpage...");
   	requestTweets(searchstring);
   	
   	function requestTweets(url) {
@@ -127,7 +139,6 @@ function postSearch(req,res) {
     	    	tweets.results = tweets.results.concat(result.results);
     	    	// If still pages available, recursive call
     	    	if (result.next_page) {
-    	    		console.log("Processing resultpage...");
     	    		requestTweets(twitterutils.TWITTERURL + result.next_page);
     	    	} 
     	    	// If no more pages, start parsing process !
@@ -147,7 +158,11 @@ function postSearch(req,res) {
         			if (address) {
         				result.address = address;
         			}
+        			var checkSum = Date.now();
         			result.latlng = {lat:lat,lng:lng};
+        			result.checkSum = checkSum;
+        			req.session.checkSum = checkSum;
+        			req.session.isFirst = false;
         			res.json(result);
         			/*****************************************
         			* Checking if user is logged in -> Saving search
@@ -165,6 +180,19 @@ function postSearch(req,res) {
     }
 }
 
+/**
+* Anti Spam function
+* return: true = spam, false = OK !
+*/
+function spamProtection(session,checksum) {
+	if (!session || checksum)
+		return false;
+	var time = Date.now() - session.lastRequest;
+	if (sessioncheck != checksum)
+		return true;
+	else
+		return false;
+}
 /*******************************************************
 * SignUp process
 *******************************************************/

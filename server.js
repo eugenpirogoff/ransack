@@ -16,7 +16,7 @@ app.use(app.router);
 
 // Loggin
 app.use(function(req, res, next){
-  	console.log("REQUEST\t-"+req.ip+"\t"+req.method+"\t"+req.url);
+  	console.log("REQUEST\t-"+req.ip+" | "+req.method+" | "+req.url);
   	next();
 });
 app.use(express.static(path.join(application_root, "public")));

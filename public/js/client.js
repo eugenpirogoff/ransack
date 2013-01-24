@@ -11,6 +11,9 @@ $(document).ready(function() {
     var isLoggedIn = false;
     var searches = {};
     var geocoder = new google.maps.Geocoder();
+    var lastClick = Date.now();
+    var isFirstSearch = true;
+    var checkSum = 0;
     
     map = new GMaps({
       div: '#map',
@@ -275,11 +278,18 @@ $(document).ready(function() {
 	* SEARCH FUNCTION - ajax get request
 	****************************************************/
 	$("#searchbutton").click(function() {
+		if (Date.now() - lastClick < 4000 && !isFirstSearch) {
+			alert("Don´t spam please");
+			return;
+		}
+		isFirstSearch = false;
+		lastClick = Date.now();
 		// Assembling search data
 		var searchdata = {
 			lat:$("#formcoord1").val(),
 			lng:$("#formcoord2").val(),
-			radius:$("#formradius").val()
+			radius:$("#formradius").val(),
+			checkSum: checkSum
 		};
 		// Trying to aquire address via reverse geocoding
 		var latlng = new google.maps.LatLng(searchdata.lat,searchdata.lng);
@@ -294,6 +304,12 @@ $(document).ready(function() {
 				data: searchdata,
 				// This function will set the actual elements on the MAP
 				success: function(data) {
+					if (data.error) {
+						$("#ajaxoverlay").remove();
+						alert("I like turtles"+data.error);
+						return;
+					}
+					checkSum = data.checkSum;
 					searches[data.timestamp] = data;
 					viewTweets(data,true);
 				}
