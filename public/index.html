@@ -6,44 +6,29 @@
 <!-- Stylesheets -->
 <link href="css/style.css" rel="stylesheet">
 <link href="css/lightbox.css" rel="stylesheet" />
-<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/bootstrap.css" rel="stylesheet" />
+
 <!-- Scripting -->
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 <script type="text/javascript" src="js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/lightbox.js"></script>
-<script type="text/javascript" src="js/scripts.js"></script>
 <script type="text/javascript" src="js/gmaps.js"></script>
-<script type="text/javascript" src="js/bootstrap-dropdown.js"></script>
-<script type="text/javascript" src="js/client.js" /></script>
 <script type="text/javascript" src="js/infobubble.js"/></script>
-<script type="text/javascript" src="js/bootstrap-modal.js"/></script>
-
+<script type="text/javascript" src="js/scripts.js"></script>
+<script type="text/javascript" src="js/client.js" /></script>
 
 </head>
   <body>
   <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <!-- Collapsable nav bar -->
-      <a class="btn btn-navbar" >
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <a class="brand">Ransack</a>
-        <ul class="nav">
-          <li class="active">
-            <a href="/">
-              <i class="icon-home">
-              </i>
-              Home
-            </a>
-          </li>
-          <li class="divider-vertical"></li>
-        </ul>
+
+      <a class="brand pull-center">Ransack</a>
         <!-- Searchcomponents -->
-        <ul id="searchbar" class="nav">
-        <div class="navbar-form pull-center">
+      
+      <ul id="searchbar" class="nav">
+      <div class="navbar-form">
           <select class="input-small" id="formradius" name="formradius">
           	<option value=1>1km</option>
           	<option value=5>5km</option>
@@ -55,12 +40,12 @@
           </select>
           <input class="span2" id="formcoord1" name="formcoord1" type="text" placeholder="Latitude"> 
           <input class="span2" id="formcoord2" name="formcoord2" type="text" placeholder="Longtitude"> 
-          <button id="searchbutton" class="btn"><i class="icon-search">
-              </i>Search</button>
-        </div>
-        </ul>
+          <button id="searchbutton" class="btn"><i class="icon-search"></i>Search</button>
+      </div>
+      </ul>
 
-        <ul class="nav pull-right">
+      <ul class="nav pull-right">
+
           <li id="signup_dropdown" class="dropdown">
           	<a class="dropdown-toggle" href="#" data-toggle="dropdown">Sign Up</a>
           	<div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
@@ -71,17 +56,19 @@
               <button id="signupbutton" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;"> Sign Up </button><br><br>
           	</div>
           </li>
+
           <li class="divider-vertical"></li>
-          <li id="signin_dropdown" class="dropdown">
-            <a id="userDropdownLink" class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">
-              </i>Sign In <strong class="caret"></strong></a>
-            <div id="userDropdown" class="dropdown-menu" style="padding: 15px; padding-bottom: 10px;">
+            <li id="signin_dropdown" class="dropdown">
+              <a id="userDropdownLink" class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user">
+                </i>Sign In <strong class="caret"></strong></a>
+              <div id="userDropdown" class="dropdown-menu" style="padding: 15px; padding-bottom: 10px;">
               <input id="username" style="margin-bottom: 15px;" type="text" name="formusername" placeholder="username"size="30" />
               <input id="password" style="margin-bottom: 15px;" type="password" name="formpassword" placeholder="password" size="30" />
              
               <button id="loginbutton" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" name="commit" value="Sign In"> Sign In </button>
             </div>
           </li>
+
         </ul>
     </div>
   </div>

@@ -6,27 +6,9 @@
 /* Add top padding for navbar-top-fixed */
 body {
 	overflow: hidden;
-
- /* padding-bottom: 40px; */
-  }
-/* Remove top padding when top navbar goes static in narrow viewports */
-/*@media (max-width: 979px) {
-  body {
-    padding-top: 0;
-    overflow: hidden;
-  }
-}*/
+}
 
 
-
-  .modal {
-      top: 20px;
-      // negative left margin to position horizontally.
-      margin-top:200px; 
-      // already in modals.less, just copied for clarification:
-      left: 50%;  
-      position: fixed;
-   }
 
 .resultfix{
   margin:10px;
@@ -35,9 +17,17 @@ body {
   color: #808080;
 }
 
+.container {
+  padding-left: 10px;
+  padding-right: auto;
+}
+
+.pull-right {
+  margin-right: 10px;
+}
 
 .span2 {
-  padding: 10px;
+  padding: 15px;
 }
 
 /* mymap class */
