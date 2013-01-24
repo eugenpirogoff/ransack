@@ -324,7 +324,7 @@ $(document).ready(function() {
 				success: function(data) {
 					if (data.error) {
 						$("#ajaxoverlay").remove();
-						alert(data.error);
+						$('#gandalf').modal({show:true});
 						return;
 					}
 					checkSum = data.checkSum;
