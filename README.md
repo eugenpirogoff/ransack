@@ -1,7 +1,8 @@
 Ransack
 =======
 
-MME2 - Image Search with Twitter API and Geolocation
+MME2 - Image Search with Twitter API and Geolocation. You can search Images that are tweeted in a speacial area.
+
 
 ![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image1.png)
 ![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image2.png)
@@ -10,20 +11,23 @@ MME2 - Image Search with Twitter API and Geolocation
 
 Installation
 ----
+Dependencies: npm, imagemagick, mongodb
+
 $ npm install	
 
-this installs all the needed Modules from package.js to ~node_mmodules/
-
-
-We need Imagemagick for the parser. http://www.imagemagick.org
+this installs all the needed Modules from package.json to ~node_mmodules/
 
 $ brew install imagemagick
 
+We need Imagemagick for the parser. http://www.imagemagick.org
 
+$ brew install mongodb
+
+
+
+
+Start
+----
 $ node server.js
 
-
-this starts the Application on localhost:8080
-
-
-Eugen Pirogoff
+This starts the Application on localhost:8080
