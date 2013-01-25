@@ -28,6 +28,10 @@ $ brew install mongodb
 
 Start
 ----
+$ mongod
+
+This starts mongodb
+
 $ node server.js
 
 This starts the Application on localhost:8080
