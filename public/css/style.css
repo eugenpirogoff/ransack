@@ -14,7 +14,7 @@ body {
   margin:5px;
   margin-top: 5px;
   margin-right: 80px;
-  margin-left: 50px;
+  margin-left: 45px;
   color: #808080;
   font-size: large;
 }
@@ -45,7 +45,7 @@ body {
 #sidebar {
   background-color: #ebebeb;
   border: 2px solid;
-  border-color: #828282;
+  border-color: #c4c4c4;
   box-shadow: 3px 3px 8px #999999;  
   border-bottom-right-radius: 10px;
   border-top-right-radius: 10px;  
@@ -65,6 +65,7 @@ body {
   text-align: left;  
   top: 40px;
   width: 280px;
+  overflow: auto;
 }
 
 .border1{
