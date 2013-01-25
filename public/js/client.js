@@ -11,8 +11,7 @@ $(document).ready(function() {
     var isLoggedIn = false;
     var searches = {};
     var geocoder = new google.maps.Geocoder();
-    var lastClick = Date.now();
-    var isFirstSearch = true;
+    var blocked = false;
     var checkSum = 0;
     
     map = new GMaps({
@@ -93,6 +92,7 @@ $(document).ready(function() {
 			success: function(response) {
 				if (response.login) {
 					setupLogin(response.username,response.email);
+					setupSearches();
 				}
 			}
 		});
@@ -296,12 +296,12 @@ $(document).ready(function() {
 	});
 	
 	function search() {
-		if (Date.now() - lastClick < 3000 && !isFirstSearch) {
+		if (blocked) {
 			$('#patience').modal({show:true});
 			return;
 		}
+		blocked = true;
 		isFirstSearch = false;
-		lastClick = Date.now();
 		// Assembling search data
 		var searchdata = {
 			lat:$("#formcoord1").val(),
@@ -325,8 +325,10 @@ $(document).ready(function() {
 					if (data.error) {
 						$("#ajaxoverlay").remove();
 						$('#gandalf').modal({show:true});
+						blocked = false;
 						return;
 					}
+					blocked = false;
 					checkSum = data.checkSum;
 					searches[data.timestamp] = data;
 					viewTweets(data,true);

@@ -411,7 +411,6 @@ function postDeleteSearch(req,res) {
 				response.message = "User doesn´t exist.";
 			}
 			var result = items[0];
-			console.log(result);
 			// Deleting given timestamp
 			delete result.searches[timestamp];
 			/**
