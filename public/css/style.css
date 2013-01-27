@@ -17,6 +17,7 @@ body {
   margin-left: 45px;
   color: #808080;
   font-size: large;
+  overflow: auto;
 }
 
 .container {
@@ -53,10 +54,8 @@ body {
   -moz-border-radius-bottomleft: 10px;     
   -webkit-border-top-left-radius: 10px;
   -moz-border-radius-topleft: 10px;  
-
   -webkit-box-shadow: inset -45px 0px 20px -30px rgba(50, 50, 50, 0.3);
   box-shadow: inset -45px 0px 20px -30px rgba(50, 50, 50, 0.15);
-
   float: left;
   margin-right: 0%;  
   padding: 15px;

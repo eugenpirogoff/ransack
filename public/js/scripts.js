@@ -14,8 +14,6 @@ $(document).ready(function(){
 	$('.mymap').css("width",$(window).innerWidth()-30);
 	$('.mymap').css("min-widtht",$(window).innerWidth()-30);
 	$('#sidebar').css("height",$(window).innerHeight()-40);
-
-
 })
     
 $(window).resize(function(){
@@ -25,8 +23,6 @@ $(window).resize(function(){
 	$('.mymap').css("min-widtht",$(window).innerWidth()-30);
 	$('#sidebar').css("height",$(window).innerHeight()-40);
 })
-
-
 
 //result slider from left 
 $(document).ready(function() {
@@ -44,5 +40,10 @@ $(document).ready(function() {
       $('.mymap').animate({"width": $(window).innerWidth()-30}, "fast").animate({"margin-left":"=230px"},"fast").dequeue();
       $("#sidebar").animate({"left": "-230px"}, "fast");
     });
-  });
+});
+
+$("#searchbutton").click(function(){
+	console.log("search clicked");
+});
+
 
