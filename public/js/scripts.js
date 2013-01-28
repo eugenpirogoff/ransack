@@ -27,23 +27,20 @@ $(window).resize(function(){
 //result slider from left 
 $(document).ready(function() {
     $("#sidebar").bind("mouseenter",function(){
-      $("#sidebar").animate({"left": "+=230px"}, "fast");
-      $('.mymap').animate({"margin-left": "+=230px"}, "fast").animate({"width": "-=230px"}, "fast").dequeue();
+		$("#sidebar").animate({"left": "-50px"}, "fast");
+        $('.mymap').animate({"margin-left": "260px"}, "fast").animate({"width": $(window).innerWidth()-260}, "fast").dequeue();
     }).bind("mouseleave",function(){
-      $('.mymap').animate({"width": "+=230px"}, "fast").animate({"margin-left":"-=230px"},"fast").dequeue();
-      $("#sidebar").animate({"left": "-=230px"}, "fast");
+      $('.mymap').animate({"width": $(window).innerWidth()-30}, "fast").animate({"margin-left": "30px"},"fast").dequeue();
+      $("#sidebar").animate({"left": "-280px"}, "fast");
     });
   });
 
 $(document).ready(function() {
     $(window).bind("mouseleave,mouseout",function(){
-      $('.mymap').animate({"width": $(window).innerWidth()-30}, "fast").animate({"margin-left":"=230px"},"fast").dequeue();
-      $("#sidebar").animate({"left": "-230px"}, "fast");
+      $('.mymap').animate({"width": $(window).innerWidth()-30}, "fast").animate({"margin-left":"30px"},"fast").dequeue();
+      $("#sidebar").animate({"left": "-280px"}, "fast");
     });
 });
 
-$("#searchbutton").click(function(){
-	console.log("search clicked");
-});
 
 
