@@ -38,18 +38,11 @@ $(document).ready(function() {
       $("#sidebar").animate({"left": "-280px"}, "fast");
       setTimeout(function() {
       	$("#sidebar").bind("mouseenter",mouseEnter);
-      },500);
+      },250);
     }
     $("#sidebar").bind("mouseenter",mouseEnter);
 	    
   });
-
-/*$(document).ready(function() {
-    $(window).bind("mouseleave,mouseout",function(){
-      $('.mymap').animate({"width": $(window).innerWidth()-30}, "fast").animate({"margin-left":"30px"},"fast").dequeue();
-      $("#sidebar").animate({"left": "-280px"}, "fast");
-    });
-});*/
 
 
 
