@@ -26,21 +26,30 @@ $(window).resize(function(){
 
 //result slider from left 
 $(document).ready(function() {
-    $("#sidebar").bind("mouseenter",function(){
+	function mouseEnter() {
+		$("#sidebar").unbind();
 		$("#sidebar").animate({"left": "-50px"}, "fast");
         $('.mymap').animate({"margin-left": "260px"}, "fast").animate({"width": $(window).innerWidth()-260}, "fast").dequeue();
-    }).bind("mouseleave",function(){
+        $("#sidebar").bind("mouseleave",mouseLeave);
+    }
+    function mouseLeave() {
+      $("#sidebar").unbind();
       $('.mymap').animate({"width": $(window).innerWidth()-30}, "fast").animate({"margin-left": "30px"},"fast").dequeue();
       $("#sidebar").animate({"left": "-280px"}, "fast");
-    });
+      setTimeout(function() {
+      	$("#sidebar").bind("mouseenter",mouseEnter);
+      },500);
+    }
+    $("#sidebar").bind("mouseenter",mouseEnter);
+	    
   });
 
-$(document).ready(function() {
+/*$(document).ready(function() {
     $(window).bind("mouseleave,mouseout",function(){
       $('.mymap').animate({"width": $(window).innerWidth()-30}, "fast").animate({"margin-left":"30px"},"fast").dequeue();
       $("#sidebar").animate({"left": "-280px"}, "fast");
     });
-});
+});*/
 
 
 
