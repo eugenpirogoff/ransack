@@ -268,7 +268,8 @@ $(document).ready(function() {
 	**************************************************/
 	function appendSearch(search) {
 		var date = new Date(search.timestamp);
-		var dateStr = date.getDay() + '.' + date.getMonth() + ' ' + date.getFullYear() +
+		console.log(date);
+		var dateStr = date.getDate() + '.' + (date.getMonth()+1) + ' ' + date.getFullYear() +
 					' - ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 		$('#searches').prepend(
 		'<div class="border1" id='+search.timestamp+'>'+search.address+'<br>'+dateStr+'<br>'+

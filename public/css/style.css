@@ -17,7 +17,7 @@ body {
   margin-left: 45px;
   color: #808080;
   font-size: large;
-  overflow: auto;
+  overflow: none;
 }
 
 .container {
