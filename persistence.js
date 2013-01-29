@@ -4,7 +4,6 @@
 var request = require("request"),
 	fs = require("fs"),
 	path = require("path"),
-	easyimage = require("easyimage"),
 	exec = require("child_process").exec,
 	mongo = require("mongodb").MongoClient,
 	rimraf = require("rimraf");
@@ -142,37 +141,7 @@ function removeSearch(username,timestamp) {
 	});
 }
 
-/*
-* Not in use any more
-*/
-function generateThumbnails(folderpath) {
-	var thumbpath = folderpath+"/thumbnails";
-	fs.mkdir(folderpath+"/thumbnails",0755,function(err) {
-		if (err) {
-			console.log("Error creating folder "+folderpath+"/thumbnails");
-		}
-		fs.readdir(folderpath,function(err,files) {
-			if (err) {
-				console.log("Error reading path "+folderpath);
-				return;
-			}
-			console.log("Creating thumbnails...");
-			// Thumbnail Processing
-			for (var file in files) {
-				easyimage.resize({src:folderpath+"/"+files[file],dst: thumbpath+"/"+files[file],
-								width:128, height:128}, 
-								function(err,stdout,stderr) {
-									if (err)
-										console.log(err);
-								}
-				);
-					
-			}
-			console.log("Done!");
-		});
-				
-	});
-}
+
 exports.persistJSON = persistJSON;
 exports.saveSearch = saveSearch;
 exports.removeSearch = removeSearch;

@@ -22,7 +22,6 @@ app.use(function(req, res, next){
 app.use(express.static(path.join(application_root, "public")));
 app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 app.set('views', __dirname);
-app.set('view engine', 'jade');
 
 
 // Assembling Routing dictionary

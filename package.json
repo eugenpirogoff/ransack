@@ -18,8 +18,6 @@
     "request":"latest",
     "jade":"latest",
 	"password-hash":"latest",
-	"easyimage":"latest",
-	"nodemailer":"latest",
 	"node-native-zip":"latest",
 	"rimraf":"latest"
   },
