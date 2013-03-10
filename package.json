@@ -14,7 +14,7 @@
     "express": "latest",
     "path":"latest", 
     "mongodb":"latest",
-    "formidable":"latest",
+    "formidable":"1.0.1",
     "request":"latest",
     "jade":"latest",
 	"password-hash":"latest",
