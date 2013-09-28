@@ -3,8 +3,6 @@ Ransack
 
 MME2 - Image Search with Twitter API and Geolocation. You can search Images that are tweeted in a speacial area.
 
-If the Server is up, you can find the mongo-less [demo here](http://delorian.mooo.com:31001/).
-
 ![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image1.png)
 ![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image2.png)
 
