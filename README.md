@@ -1,6 +1,11 @@
 Ransack
 =======
 
+NEWS: This Application is not working anymore due to Twitter API changes and the deprication of v1.0 [Announcement](https://dev.twitter.com/blog/changes-coming-to-twitter-api).
+----
+
+
+
 MME2 - Image Search with Twitter API and Geolocation. You can search Images that are tweeted in a speacial area.
 
 ![image](https://raw.github.com/eugenpirogoff/ransack/master/tmp/image1.png)
